@@ -17,9 +17,36 @@ output: github_document
 During the height of the pandemic, Citi Bikes played an integral part in helping to transport critical workers around NYC. Many people in NYC also likely switched from riding the subway regularly to seeking alternative transportation methods. We are interested in understanding how transportation trends across NYC changed during the pandemic and since vaccinations became widely available in early 2021. 
 
 ## The intended final products
+Website that includes:
+
+* An animated heat map showing trends over time
+
+* Interactive maps for NYC boroughs (except for Staten Island)
+
+* Data visualization showing trends in sign-ups
+
+* Interactive timeline that shows different COVID milestones and Citi Bike trends 
+
+* Data visualization showing changes in MTA ridership trends vs. Citi Bike ridership trends
 
 ## The anticipated data sources
+* Citi Bike Data (https://ride.citibikenyc.com/system-data)
+
+* MTA Ridership Data (https://new.mta.info/coronavirus/ridership)
 
 ## The planned analyses / visualizations / coding challenges
 
 ## The planned timeline
+* Download and clean datasets: by November 22nd 
+
+* Initial exploratory analyses: by November 26th 
+
+* Creation of data visualizations/maps: by December 1st
+
+* Creation of website: by December 3rd
+
+* Feedback Collection: by December 6th  
+
+* Writing Report: by December 10th  
+
+* Finalization of work products: by December 10th  
