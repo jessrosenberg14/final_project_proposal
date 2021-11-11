@@ -3,18 +3,23 @@ title: "final_project_proposal"
 output: github_document
 ---
 
-First, you will define your teams and propose a project. This proposal should be a half-page to a page in length and include:
-
-The group members (names and UNIs)
+## The group members (names and UNIs)
 * Jess Rosenberg (jdr2191)
 * Zoe Verzani (zv2138)
 * Matthew Russell (mtr2143)
 * Rose Killian (rk3110)
 * Christine Zettler (cz2657)
 
-The tentative project title
-The motivation for this project
-The intended final products
-The anticipated data sources
-The planned analyses / visualizations / coding challenges
-The planned timeline
+## The tentative project title
+**Impact of COVID on Citi Bike Usage in Manhattan**
+
+##The motivation for this project
+During the height of the pandemic, Citi Bikes played an integral part in helping to transport critical workers around NYC. Many people in NYC also likely switched from riding the subway regularly to seeking alternative transportation methods. We are interested in understanding how transportation trends across NYC changed during the pandemic and since vaccinations became widely available in early 2021. 
+
+## The intended final products
+
+## The anticipated data sources
+
+## The planned analyses / visualizations / coding challenges
+
+## The planned timeline
