@@ -1,0 +1,13 @@
+---
+title: lookup_table_stations
+output: github_document
+---
+
+```{r, load required packages, include = FALSE}
+library(tidyverse)
+library(tidygeocoder)
+
+knitr::opts_chunk$set(
+  eval = FALSE
+)
+```
