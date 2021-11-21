@@ -32,3 +32,47 @@ manhattan_rides_df <- map_df(file_names, find_manhattan_rides)
 ``` r
 write_csv(manhattan_rides_df, "manhattan_rides.csv")
 ```
+
+``` r
+manhattan_rides_df = 
+  manhattan_rides_df %>% 
+    drop_na() %>% 
+    mutate(
+      trip_min = tripduration/60, 
+      day_of_week = wday(starttime, label = TRUE), 
+      start_date = format(starttime, format="%m-%d"), 
+      end_date = format(stoptime, format="%m-%d"), 
+      year = as.factor(year(starttime))
+    ) 
+```
+
+Cleaning process: - Dropped missing values - Converted trip duration to
+minutes from seconds - Created day of the week variable
+
+## Exporatory Data Analysis
+
+``` r
+manhattan_rides_df %>% 
+  group_by(day_of_week, year) %>% 
+  summarize(obs = n()) %>% 
+  ggplot(aes(x = day_of_week, y = obs, group = year, color = year)) +
+  geom_point() + 
+  geom_line()
+```
+
+Fewer rides during the week in 2020 (presumably because of WFH), but
+more rides on the weekends (presumably because people avoid subway/
+ubers)
+
+``` r
+manhattan_rides_df %>% 
+  group_by(start_date, year) %>% 
+  summarize(obs = n()) %>% 
+  ggplot(aes(x = start_date, y = obs, group = year, color = year)) +
+  geom_line() + 
+  geom_smooth(se = FALSE)
+```
+
+Not that helpful, but not a meaningful difference in numbers of rides
+between 2019 and 2020 except maybe March/ April where there appears to
+be a slight dip
