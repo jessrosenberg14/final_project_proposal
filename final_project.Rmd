@@ -5,9 +5,8 @@ output: github_document
 
 ```{r, load required packages, message=FALSE}
 library(tidyverse)
-library(rvest)
-library(httr)
 ```
+
 
 
 
