@@ -63,3 +63,7 @@ nyc_stations <-
   select(!(c(lat, long)))
 ```
 
+```{r, write CSV file for all unique stations}
+write_csv(nyc_stations, "nyc_stations.csv")
+```
+

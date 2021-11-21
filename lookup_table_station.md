@@ -49,3 +49,7 @@ nyc_stations <-
   unnest(location) %>% 
   select(!(c(lat, long)))
 ```
+
+``` r
+write_csv(nyc_stations, "nyc_stations.csv")
+```
