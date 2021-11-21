@@ -28,3 +28,7 @@ find_manhattan_rides <- function(data_name) {
 
 manhattan_rides_df <- map_df(file_names, find_manhattan_rides)
 ```
+
+``` r
+write_csv(manhattan_rides_df, "manhattan_rides.csv")
+```
