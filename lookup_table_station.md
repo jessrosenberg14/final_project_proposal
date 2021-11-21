@@ -53,3 +53,11 @@ nyc_stations <-
 ``` r
 write_csv(nyc_stations, "nyc_stations.csv")
 ```
+
+``` r
+manhattan_stations <-
+  nyc_stations %>%
+  filter(str_detect(address, "(?<=Manhattan, )New York(?= County)") == T)
+
+write_csv(manhattan_stations, "manhattan_stations.csv")
+```
