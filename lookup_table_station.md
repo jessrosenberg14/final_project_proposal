@@ -37,3 +37,15 @@ find_unique_stations <- function(data_name){
 
 }
 ```
+
+``` r
+nyc_stations <-
+  map_df(file_names, find_unique_stations) %>% 
+  distinct() %>% 
+  arrange(id) %>% 
+  mutate(
+    location = reverse_geo(lat = latitude, long = longitude, method = 'osm')
+  ) %>% 
+  unnest(location) %>% 
+  select(!(c(lat, long)))
+```

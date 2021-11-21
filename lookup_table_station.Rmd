@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, read in CSV files and create df with all unique stations, message=FALSE, warning=FALSE}
+```{r, read in CSV files and create df with all unique stations}
 file_names <- list.files(path = "./data")
 
 find_unique_stations <- function(data_name){
@@ -49,5 +49,17 @@ find_unique_stations <- function(data_name){
   return(stations)
 
 }
+```
+
+```{r, update nyc_stations with address}
+nyc_stations <-
+  map_df(file_names, find_unique_stations) %>% 
+  distinct() %>% 
+  arrange(id) %>% 
+  mutate(
+    location = reverse_geo(lat = latitude, long = longitude, method = 'osm')
+  ) %>% 
+  unnest(location) %>% 
+  select(!(c(lat, long)))
 ```
 
