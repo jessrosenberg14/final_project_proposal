@@ -3,8 +3,14 @@ title: "P8105 Final Project: Citi Bikes"
 output: github_document
 ---
 
-```{r, load required packages, message=FALSE}
+```{r, load required packages, include = FALSE}
 library(tidyverse)
+
+knitr::opts_chunk$set(
+  eval = FALSE, 
+  message = FALSE, 
+  warning = FALSE
+)
 ```
 
 
