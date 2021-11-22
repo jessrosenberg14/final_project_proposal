@@ -20,7 +20,7 @@ find_manhattan_rides <- function(data_name) {
       start_station_id %in% pull(manhattan_stations, id), 
       end_station_id %in% pull(manhattan_stations, id)
     ) %>% 
-    sample_n(., 10000)
+    sample_frac(.01)
   
   return(bike_rides_df)
     
@@ -37,17 +37,28 @@ write_csv(manhattan_rides_df, "manhattan_rides.csv")
 manhattan_rides_df = 
   manhattan_rides_df %>% 
     drop_na() %>% 
+    filter(gender != 0, birth_year <= 2003, birth_year>1937) %>% 
+    distinct() %>% 
     mutate(
       trip_min = tripduration/60, 
       day_of_week = wday(starttime, label = TRUE), 
       start_date = format(starttime, format="%m-%d"), 
       end_date = format(stoptime, format="%m-%d"), 
-      year = as.factor(year(starttime))
-    ) 
+      year = as.factor(year(starttime)), 
+      age = as.numeric(2021-birth_year), 
+      age_group = cut(age, breaks=c(-Inf, 25, 35, 45, 55, 65, 85), labels=c("18-25","26-35", "36-45", "46-55", "56-65", "66-85")))
+  
+
+manhattan_rides_df %>% 
+  group_by(age_group) %>% 
+  summarize(min = min(age), max = max(age), obs = n())
 ```
 
-Cleaning process: - Dropped missing values - Converted trip duration to
-minutes from seconds - Created day of the week variable
+Cleaning process: - Dropped missing values, including where gender == 0
+(and year of birth is 1969 - default) - Dropped riders born after 2002
+or before 1937 - Converted trip duration to minutes from seconds -
+Created day of the week variable - Created other date-related variables
+- Created age variables and age groups
 
 ## Exporatory Data Analysis
 
