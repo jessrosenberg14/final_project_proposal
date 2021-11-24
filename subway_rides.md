@@ -1,4 +1,4 @@
-subway\_rides
+subway_rides
 ================
 
 ``` r
@@ -30,4 +30,19 @@ ridership_covid_changes = read_csv("covid-ridership.csv") %>%
 
 ridership_covid_changes_2020 = ridership_covid_changes %>% 
   filter(date <= as.Date('2020-12-31'))
+```
+
+``` r
+library(leaflet)
+library(leaflet.extras)
+library(magrittr)
+
+# define center of map 
+
+
+viz_map_subway = 
+  leaflet() %>%
+  addTiles() %>% 
+  setView(-74.00, 40.71, zoom = 12) %>% 
+  addHeatmap(lng=~gtfs_longitude,lat=~gtfs_latitude,intensity=~exits,max=100,radius=20,blur=10)
 ```
