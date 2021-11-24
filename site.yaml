@@ -1,0 +1,14 @@
+name: "Final Project Website"
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - text: "About US"
+      href: about_us.html
+    - text: "Plotly"
+      href: plotly.html
+    - text: "Dashboard"
+      href: dashboard.html  
+output:
+  html_document:
+    theme: yeti
