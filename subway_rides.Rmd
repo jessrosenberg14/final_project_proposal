@@ -24,10 +24,12 @@ turnstiles_2019_m = read_csv("2019-turnstile.csv") %>%
          gtfs_longitude = as.numeric(gtfs_longitude))
   
   
-turnstiles_2020_m = read_csv("2019-turnstile.csv") %>% 
+turnstiles_2020_m = read_csv("2020-turnstile.csv") %>% 
     filter(borough == "M") %>% 
     mutate(gtfs_latitude = as.numeric(gtfs_latitude),
          gtfs_longitude = as.numeric(gtfs_longitude))
+
+turnstiles_19_20_m = rbind(turnstiles_2019_m, turnstiles_2020_m)
 ```
 
 ter = total estimated ridership
@@ -100,12 +102,6 @@ ridership_covid_pc_tidy %>%
 ```
 
 
-
-
-
-
-
-
 Practice Map 
 ```{r}
 sample = turnstiles_2019_m %>% 
@@ -133,6 +129,59 @@ my_leaf = leaflet(sample) %>%
     opacity = 1)
 ```
 
+This One Works :) 
+```{r}
+ui <- fluidPage(
+    
+  titlePanel("Manhattan Subway Ridership Overtime"),
+  
+  sliderInput(
+    inputId = "date",
+    label = "Dates",
+    min = as.Date("2019-01-01","%Y-%m-%d"),
+    max = as.Date("2020-12-25","%Y-%m-%d"),
+    value  = as.Date("2019-01-01","%Y-%m-%d"),
+    timeFormat = "%Y-%m-%d",
+    step = 1,
+    animate = animationOptions(interval = 200, loop = FALSE)
+  ),
+
+  mainPanel(
+    leafletOutput("nyc_map")
+  )
+)
+
+server <- function(input, output){
+    
+    d = reactive({
+      day = input$date
+      
+      d = turnstiles_19_20_m %>% 
+        filter(date == day) 
+    })
+  
+    output$nyc_map <- renderLeaflet({
+
+        leaflet(d()) %>%
+        addProviderTiles("CartoDB.Positron") %>% 
+        addCircleMarkers(
+          lat = ~ gtfs_latitude, 
+          lng = ~ gtfs_longitude, 
+          color = ~pal(exits),
+          stroke = FALSE, 
+          fillOpacity = 0.85,
+          label = lapply(labs, htmltools::HTML)) %>% 
+        addLegend("bottomright", pal = pal, values = ~exits,
+                  title = "Ridership",
+                 opacity = 1)
+    })
+}
+
+shinyApp(ui, server)
+```
+
+
+
 Creating Map with Shiny Attempt Kinda Works 
 ```{r}
 pal <- colorNumeric(palette = "Blues",
@@ -146,14 +195,23 @@ dateRange =
 ui <- fluidPage(
     
   titlePanel("Manhattan Subway Ridership Overtime"),
-    
-  sliderInput(inputId = "date", 
-                label = "Date:",
-                min = as.Date("2019-01-01","%Y-%m-%d"),
-                max = as.Date("2019-12-31","%Y-%m-%d"),
-                value = as.Date("2019-01-01"),
-                timeFormat = "%Y-%m-%d"),
+  
+  dateRangeInput(
+  inputId = "date",
+  label = "Dates",
+  start = as.Date("2019-01-01","%Y-%m-%d"),
+  end = as.Date("2019-12-31","%Y-%m-%d"),
+  min = as.Date("2019-01-01","%Y-%m-%d"),
+  max = as.Date("2019-12-31","%Y-%m-%d"),
+  format = "yyyy-mm-dd",
+  separator = " to ",
+  width = NULL,
+  autoclose = TRUE
+  ),
+  
+  mainPanel(
     leafletOutput("nyc_map")
+  )
 )
 
 server <- function(input, output){
@@ -178,7 +236,7 @@ server <- function(input, output){
 shinyApp(ui, server)
 ```
 
-GGPlot
+GGPlot - Messing Around 
 ```{r}
 map = turnstiles_2019_m %>% 
   ggplot() +
