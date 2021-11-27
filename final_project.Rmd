@@ -8,75 +8,28 @@ library(tidyverse)
 library(lubridate)
 
 knitr::opts_chunk$set(
-  eval = FALSE, 
   message = FALSE, 
   warning = FALSE
 )
 ```
 
-```{r, obtain a sample of rides from 2019-2020}
-file_names <- list.files(path = "./data")
-manhattan_stations <- read_csv("manhattan_stations.csv")
+```{r, read in manhattan rides data}
+manhattan_rides_df <- read_csv("manhattan_rides.csv")
 
-find_manhattan_rides <- function(data_name) {
-  
-  set.seed(8105)
-  
-  bike_rides_df <-
-    read_csv(str_c("./data/", data_name)) %>% 
-    janitor::clean_names() %>% 
-    mutate(
-      start_station_id = as.numeric(start_station_id), 
-      end_station_id = as.numeric(end_station_id)
-    ) %>% 
-    filter(
-      start_station_id %in% pull(manhattan_stations, id), 
-      end_station_id %in% pull(manhattan_stations, id)
-    ) %>% 
-    drop_na() %>% 
-    filter(gender != 0, birth_year <= 2003, birth_year>1937) %>% 
-    distinct() %>% 
-    sample_frac(.01)
-  
-  return(bike_rides_df)
-    
-}
-
-manhattan_rides_df <- map_df(file_names, find_manhattan_rides)
-```
-
-Data cleaning steps pre-sampling: 
-- Dropped missing values, including where gender == 0 (and year of birth is 1969 - default)
-- Dropped riders born after 2002 or before 1937
-- Removed duplicates 
-
-```{r, write all manhattan rides to a df}
-write_csv(manhattan_rides_df, "manhattan_rides.csv")
-```
-
-```{r, tidy manhattan rides data}
-manhattan_rides_df = 
+manhattan_rides_df <-
   manhattan_rides_df %>% 
-    mutate(
-      trip_min = tripduration/60, 
-      day_of_week = wday(starttime, label = TRUE), 
-      start_date = format(starttime, format="%m-%d"), 
-      end_date = format(stoptime, format="%m-%d"), 
-      year = as.factor(year(starttime)), 
-      age = as.numeric(2021-birth_year), 
-      age_group = cut(age, breaks=c(-Inf, 25, 35, 45, 55, 65, 85), labels=c("18-25","26-35", "36-45", "46-55", "56-65", "66-85")))
-  
+  mutate(
+    day_of_week = factor(day_of_week, ordered = T, 
+                         levels = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")), 
+    year = factor(year), 
+    age_group = factor(age_group, ordered = T,
+                       levels = c("18-25","26-35", "36-45", "46-55", "56-65", "66-85"))
+  )
 
 manhattan_rides_df %>% 
   group_by(age_group) %>% 
   summarize(min = min(age), max = max(age), obs = n())
 ```
-
-Data cleaning steps: 
-- Converted trip duration to minutes from seconds
-- Created day of the week variable 
-- Created other date-related variables
-- Created age variables and age groups
 
 ## Exporatory Data Analysis
 

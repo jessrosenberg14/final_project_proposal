@@ -2,65 +2,32 @@ P8105 Final Project: Citi Bikes
 ================
 
 ``` r
-file_names <- list.files(path = "./data")
-manhattan_stations <- read_csv("manhattan_stations.csv")
+manhattan_rides_df <- read_csv("manhattan_rides.csv")
 
-find_manhattan_rides <- function(data_name) {
-  
-  set.seed(8105)
-  
-  bike_rides_df <-
-    read_csv(str_c("./data/", data_name)) %>% 
-    janitor::clean_names() %>% 
-    mutate(
-      start_station_id = as.numeric(start_station_id), 
-      end_station_id = as.numeric(end_station_id)
-    ) %>% 
-    filter(
-      start_station_id %in% pull(manhattan_stations, id), 
-      end_station_id %in% pull(manhattan_stations, id)
-    ) %>% 
-    drop_na() %>% 
-    filter(gender != 0, birth_year <= 2003, birth_year>1937) %>% 
-    distinct() %>% 
-    sample_frac(.01)
-  
-  return(bike_rides_df)
-    
-}
-
-manhattan_rides_df <- map_df(file_names, find_manhattan_rides)
-```
-
-Data cleaning steps pre-sampling: - Dropped missing values, including
-where gender == 0 (and year of birth is 1969 - default) - Dropped riders
-born after 2002 or before 1937 - Removed duplicates
-
-``` r
-write_csv(manhattan_rides_df, "manhattan_rides.csv")
-```
-
-``` r
-manhattan_rides_df = 
+manhattan_rides_df <-
   manhattan_rides_df %>% 
-    mutate(
-      trip_min = tripduration/60, 
-      day_of_week = wday(starttime, label = TRUE), 
-      start_date = format(starttime, format="%m-%d"), 
-      end_date = format(stoptime, format="%m-%d"), 
-      year = as.factor(year(starttime)), 
-      age = as.numeric(2021-birth_year), 
-      age_group = cut(age, breaks=c(-Inf, 25, 35, 45, 55, 65, 85), labels=c("18-25","26-35", "36-45", "46-55", "56-65", "66-85")))
-  
+  mutate(
+    day_of_week = factor(day_of_week, ordered = T, 
+                         levels = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")), 
+    year = factor(year), 
+    age_group = factor(age_group, ordered = T,
+                       levels = c("18-25","26-35", "36-45", "46-55", "56-65", "66-85"))
+  )
 
 manhattan_rides_df %>% 
   group_by(age_group) %>% 
   summarize(min = min(age), max = max(age), obs = n())
 ```
 
-Data cleaning steps: - Converted trip duration to minutes from seconds -
-Created day of the week variable - Created other date-related variables
-- Created age variables and age groups
+    ## # A tibble: 6 × 4
+    ##   age_group   min   max    obs
+    ##   <ord>     <dbl> <dbl>  <int>
+    ## 1 18-25        18    25  35068
+    ## 2 26-35        26    35 102948
+    ## 3 36-45        36    45  56694
+    ## 4 46-55        46    55  43430
+    ## 5 56-65        56    65  26232
+    ## 6 66-85        66    85   6734
 
 ## Exporatory Data Analysis
 
@@ -72,6 +39,8 @@ manhattan_rides_df %>%
   geom_point() + 
   geom_line()
 ```
+
+![](final_project_files/figure-gfm/Rides%20by%20day%20of%20week-1.png)<!-- -->
 
 Fewer rides during the week in 2020 (presumably because of WFH), but
 more rides on the weekends (presumably because people avoid subway/
@@ -85,6 +54,8 @@ manhattan_rides_df %>%
   geom_line() + 
   geom_smooth(se = FALSE)
 ```
+
+![](final_project_files/figure-gfm/Rides%20per%20day%20summary-1.png)<!-- -->
 
 Not that helpful, but not a meaningful difference in numbers of rides
 between 2019 and 2020 except maybe March/ April where there appears to
