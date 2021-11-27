@@ -20,6 +20,9 @@ find_manhattan_rides <- function(data_name) {
       start_station_id %in% pull(manhattan_stations, id), 
       end_station_id %in% pull(manhattan_stations, id)
     ) %>% 
+    drop_na() %>% 
+    filter(gender != 0, birth_year <= 2003, birth_year>1937) %>% 
+    distinct() %>% 
     sample_frac(.01)
   
   return(bike_rides_df)
@@ -29,6 +32,10 @@ find_manhattan_rides <- function(data_name) {
 manhattan_rides_df <- map_df(file_names, find_manhattan_rides)
 ```
 
+Data cleaning steps pre-sampling: - Dropped missing values, including
+where gender == 0 (and year of birth is 1969 - default) - Dropped riders
+born after 2002 or before 1937 - Removed duplicates
+
 ``` r
 write_csv(manhattan_rides_df, "manhattan_rides.csv")
 ```
@@ -36,9 +43,6 @@ write_csv(manhattan_rides_df, "manhattan_rides.csv")
 ``` r
 manhattan_rides_df = 
   manhattan_rides_df %>% 
-    drop_na() %>% 
-    filter(gender != 0, birth_year <= 2003, birth_year>1937) %>% 
-    distinct() %>% 
     mutate(
       trip_min = tripduration/60, 
       day_of_week = wday(starttime, label = TRUE), 
@@ -54,9 +58,7 @@ manhattan_rides_df %>%
   summarize(min = min(age), max = max(age), obs = n())
 ```
 
-Cleaning process: - Dropped missing values, including where gender == 0
-(and year of birth is 1969 - default) - Dropped riders born after 2002
-or before 1937 - Converted trip duration to minutes from seconds -
+Data cleaning steps: - Converted trip duration to minutes from seconds -
 Created day of the week variable - Created other date-related variables
 - Created age variables and age groups
 
