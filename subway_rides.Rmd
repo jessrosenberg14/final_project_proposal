@@ -3,6 +3,7 @@ title: "subway_rides"
 output: github_document
 ---
 
+# Loading Packages
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(lubridate)
@@ -17,6 +18,8 @@ library(maps)
 library(dplyr)
 ```
 
+# Data Loading 
+## Turnstile Data 
 ```{r, ridership data for 2019 and 2020, Manhattan Only}
 turnstiles_2019_m = read_csv("2019-turnstile.csv") %>% 
   filter(borough == "M") %>% 
@@ -29,12 +32,14 @@ turnstiles_2020_m = read_csv("2020-turnstile.csv") %>%
     mutate(gtfs_latitude = as.numeric(gtfs_latitude),
          gtfs_longitude = as.numeric(gtfs_longitude))
 
-turnstiles_19_20_m = rbind(turnstiles_2019_m, turnstiles_2020_m)
+turnstiles_19_20_m = rbind(turnstiles_2019_m, turnstiles_2020_m) %>% 
+  drop_na()
 ```
 
 ter = total estimated ridership
 pc = percent change 
 
+## Ridership Data Across Multiple Public Transport Systems in NYC 
 ```{r, ridership data 3/1/2020 - today}
 ridership_covid_changes = read_csv("covid-ridership.csv") %>% 
   janitor::clean_names() %>% 
@@ -71,8 +76,9 @@ ridership_covid_pc_tidy =
           percent_change = as.numeric(percent_change))
 ```
 
-Ridership Line Plot 
-2 ways (ggplot and ploty)
+# Graphs and Maps 
+
+## Using Plotly to Plot Ridership Data Acorss Multiple Transport Systems in NYC 
 ```{r, plotting ridership post COVID}
 # Using ggplot
 post_covid_transit = ridership_covid_pc_tidy %>% 
@@ -102,35 +108,18 @@ ridership_covid_pc_tidy %>%
 ```
 
 
-Practice Map 
+## Shiny and Leaflet - NYC Subway Across 2019-2020 
 ```{r}
-sample = turnstiles_2019_m %>% 
-  filter(date == as.Date('2019-01-20'))
+# create color pallet 
+pal <- colorNumeric(palette = "viridis",
+                    domain = turnstiles_19_20_m$exits)
 
-pal <- colorNumeric(palette = "Blues",
-                    domain = sample$exits)
-
-labs <- lapply(seq(nrow(sample)), function(i) {
-  paste0( '<p> Station Name: ', sample[i, "stop_name"], '<p></p> Subway Lines: ', sample[i, "daytime_routes"])
+# create labels 
+labs <- lapply(seq(nrow(turnstiles_19_20_m)), function(i) {
+  paste0( '<p> Station Name: ', turnstiles_19_20_m[i, "stop_name"], '<p></p> Subway Lines: ', turnstiles_19_20_m[i, "daytime_routes"])
 })
 
-my_leaf = leaflet(sample) %>%
-  setView(-74.00, 40.78, zoom = 11) %>%
-  addProviderTiles("CartoDB.Positron") %>% 
-  addCircleMarkers(
-    lat = ~ gtfs_latitude, 
-    lng = ~ gtfs_longitude, 
-    color = ~pal(exits),
-    stroke = FALSE, 
-    fillOpacity = 0.85,
-    label = lapply(labs, htmltools::HTML)) %>% 
-  addLegend("bottomright", pal = pal, values = ~exits,
-    title = "2019 Ridership",
-    opacity = 1)
-```
-
-This One Works :) 
-```{r}
+# create 
 ui <- fluidPage(
     
   titlePanel("Manhattan Subway Ridership Overtime"),
@@ -161,25 +150,63 @@ server <- function(input, output){
     })
   
     output$nyc_map <- renderLeaflet({
-
         leaflet(d()) %>%
         addProviderTiles("CartoDB.Positron") %>% 
         addCircleMarkers(
           lat = ~ gtfs_latitude, 
           lng = ~ gtfs_longitude, 
           color = ~pal(exits),
+          radius = 5,
           stroke = FALSE, 
           fillOpacity = 0.85,
           label = lapply(labs, htmltools::HTML)) %>% 
-        addLegend("bottomright", pal = pal, values = ~exits,
-                  title = "Ridership",
-                 opacity = 1)
+        addLegend("bottomright", 
+                  pal = pal, 
+                  values = ~exits,
+                  title = "Ridership", 
+                  opacity = 1)
     })
-}
+} 
 
 shinyApp(ui, server)
 ```
 
+
+
+# Junk Attempts 
+Practice Map 
+```{r}
+sample = turnstiles_2019_m %>% 
+  filter(date == as.Date('2019-01-20'))
+
+pal <- colorNumeric(palette = "Blues",
+                    domain = sample$exits)
+
+labs <- lapply(seq(nrow(sample)), function(i) {
+  paste0( '<p> Station Name: ', sample[i, "stop_name"], '<p></p> Subway Lines: ', sample[i, "daytime_routes"])
+})
+
+# messing around trying to add subway lines 
+subway_lines = geojsonio::geojson_read("subway_lines.geojson", what = "sp")
+
+leaflet(subway_lines) %>%
+  setView(-74.00, 40.78, zoom = 11) %>%
+  addTiles()
+
+my_leaf = leaflet(sample) %>%
+  setView(-74.00, 40.78, zoom = 11) %>%
+  addProviderTiles("CartoDB.Positron") %>% 
+  addCircleMarkers(
+    lat = ~ gtfs_latitude, 
+    lng = ~ gtfs_longitude, 
+    color = ~pal(exits),
+    stroke = FALSE, 
+    fillOpacity = 0.85,
+    label = lapply(labs, htmltools::HTML)) %>% 
+  addLegend("bottomright", pal = pal, values = ~exits,
+    title = "2019 Ridership",
+    opacity = 1)
+```
 
 
 Creating Map with Shiny Attempt Kinda Works 
