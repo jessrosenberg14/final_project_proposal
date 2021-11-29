@@ -5,9 +5,10 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(viridis)
-library(shiny)
-library(timevis)
 library(lubridate)
+library(gganimate)
+library(zoo)
+library(tis)
 ```
 
 Input Citibike Membership Datafile
@@ -28,102 +29,26 @@ membership_df =
   rename(ct_single_day_passes = single_day_passes) %>%
   rename(ct_three_day_passes = three_day_passes) %>%
   rename(ct_total_annual_members = total_annual_members) %>%
+  mutate(date = as.yearmon(date, "%m/%Y")) %>%
+  mutate(date = as.jul(date)) %>%
+  mutate(date = as.Date(date)) %>%
   pivot_longer(
     cols = starts_with("ct"),
     names_to = "measure",
     values_to = "count"
   ) 
 
-membership_annual =
+
+measures_of_interest =
   membership_df %>%
-  filter(measure == "ct_annual_members") 
+  filter(measure %in% c("ct_annual_members","ct_single_day_passes","ct_single_trip_passes")) 
 
-membership_annual %>%
-  ggplot(aes(x = date, y = count)) +
-  geom_line(aes(group = measure, color = measure)) + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-
-single_days_trips =
-  membership_df %>%
-  filter(measure %in% c("ct_single_day_passes","ct_single_trip_passes"))
-
-single_days_trips %>%
-  ggplot(aes(x = date, y = count)) +
-  geom_line(aes(group = measure, color = measure)) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-
-end_of_month_annual_members =
-  membership_df %>%
-  filter(measure == "ct_total_annual_members")
-
-end_of_month_annual_members %>%
-  ggplot(aes(x = date, y = count)) +
-  geom_line(aes(group = measure, color = measure)) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-
-membership_df %>%
+measures_of_interest %>%
   ggplot(aes(x = date, y = count)) +
   geom_line(aes(group = measure, color = measure)) +
   scale_color_viridis_d(option = "D") +
+  transition_reveal(date) +
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-```
-
-Try to create Shiny Timeline
-
-```{r}
-ui <- fluidPage(
-    
-  titlePanel("CitiBike Membership Over Time"),
-  
-  sliderInput(
-    inputId = "date",
-    label = "Dates",
-    min = as.Date("01/2019","%m/%Y"),
-    max = as.Date("10/2021","%m/%Y"),
-    value  = as.Date("01/2019","%m/%Y"),
-    timeFormat = "%m/%Y",
-    step = 1,
-    animate = animationOptions(interval = 200, loop = FALSE)
-  ),
-
-  mainPanel(
-    timevisOutput("timeline")
-  )
-)
-    
-
-server <- function(input, output){
-    
-    d = reactive({
-      day = input$date
-      
-      d = membership_df 
-    })
-  
-    output$nyc_map <- renderTimevis({
-
-        timevis(membership_df)
-    })
-}
-
-shinyApp(ui, server)
-```
-
-```{r}
-timeline_1 <- data.frame(
-  id      = 2:6,
-  content = c("Annual Members", "Single Trip",
-              "Single Day Pass", "Three Day Pass", "Total Annual Members")
-)
-
-timevis(timeline_1)
-  
-  ,
-  start   = c("2016-01-10", "2016-01-11",
-              "2016-01-20", "2016-02-14 15:00:00"),
-  end     = c(NA, NA, "2016-02-04", NA)
-)
-
-timevis(data)
 ```
 
