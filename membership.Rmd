@@ -46,6 +46,7 @@ measures_of_interest =
 measures_of_interest %>%
   ggplot(aes(x = date, y = count)) +
   geom_line(aes(group = measure, color = measure)) +
+  geom_point(aes(group = seq_along(date), color = measure)) +
   scale_color_viridis_d(option = "D") +
   transition_reveal(date) +
   theme_minimal() +

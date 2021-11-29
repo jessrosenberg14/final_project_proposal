@@ -346,6 +346,7 @@ library(zoo)</code></pre>
 measures_of_interest %&gt;%
   ggplot(aes(x = date, y = count)) +
   geom_line(aes(group = measure, color = measure)) +
+  geom_point(aes(group = seq_along(date), color = measure)) +
   scale_color_viridis_d(option = &quot;D&quot;) +
   transition_reveal(date) +
   theme_minimal() +
