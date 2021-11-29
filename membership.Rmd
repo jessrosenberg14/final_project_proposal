@@ -34,10 +34,37 @@ membership_df =
     values_to = "count"
   ) 
 
+membership_annual =
+  membership_df %>%
+  filter(measure == "ct_annual_members") 
+
+membership_annual %>%
+  ggplot(aes(x = date, y = count)) +
+  geom_line(aes(group = measure, color = measure)) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+single_days_trips =
+  membership_df %>%
+  filter(measure %in% c("ct_single_day_passes","ct_single_trip_passes"))
+
+single_days_trips %>%
+  ggplot(aes(x = date, y = count)) +
+  geom_line(aes(group = measure, color = measure)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+end_of_month_annual_members =
+  membership_df %>%
+  filter(measure == "ct_total_annual_members")
+
+end_of_month_annual_members %>%
+  ggplot(aes(x = date, y = count)) +
+  geom_line(aes(group = measure, color = measure)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
 membership_df %>%
-  ggplot(aes(x = date, y = count, group = measure), color = measure) +
-  geom_line() +
-  scale_fill_viridis_d(option = "C") +
+  ggplot(aes(x = date, y = count)) +
+  geom_line(aes(group = measure, color = measure)) +
+  scale_color_viridis_d(option = "D") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
