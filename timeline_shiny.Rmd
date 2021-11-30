@@ -1,0 +1,93 @@
+---
+title: "timeline"
+output: html_document
+runtime: shiny
+---
+
+```{r}
+library(tidyverse)
+library(timevis)
+library(shiny)
+```
+
+Build a timeline
+
+```{r}
+timeline <- data.frame(
+  id      = 1:11,
+  content = c("First COVID Case in NYC", 
+              "NYC issues guidelines to avoid densely packed buses, subways, or trains",
+              "NYC Public Schools Close", "NYC Bars and Restaurants Close for In-Person Dining",
+              "Governor Cuomo announces NYC subway closures from 1 am to 5 am", 
+              "NYC Begins Phase 1 Re-Opening", "NYC Begins Phase 2 Re-Opening",
+              "NYC Begins Phase 3 of Re-Opening (without indoor dining)",
+              "NYC Begins Phase 4 of Re-Opening (excluding malls, museums, and indoor dining/bars)",
+              "Elementary Students Return to Public School Classrooms across NYC",
+              "NYC Schools Switch to Fully Remote"),
+  start   = c("2020-03-01", "2020-03-08", "2020-03-16", "2020-03-17", "2020-04-30",
+              "2020-06-08", "2020-06-022", "2020-07-06", "2020-07-19", "2020-09-29", "2020-11-19"),
+  end     = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  style = c("background: #58DBA6;", "background: #62C5E9;", "background: #58DBA6;", 
+            "background: #62C5E9;", "background: #58DBA6;", "background: #62C5E9;", 
+            "background: #58DBA6;", "background: #62C5E9;", "background: #58DBA6;", 
+            "background: #62C5E9;", "background: #58DBA6;")
+)
+
+
+timevis(
+  timeline,
+  showZoom = TRUE,
+  zoomFactor = 0.5,
+  fit = TRUE,
+  width = "110%")
+```
+
+SHINY?
+```{r}
+data <- data.frame(
+  id      = 1:11,
+  content = c("First COVID Case in NYC", 
+              "NYC issues guidelines to avoid densely packed buses, subways, or trains",
+              "NYC Public Schools Close", "NYC Bars and Restaurants Close for In-Person Dining",
+              "Governor Cuomo announces NYC subway closures from 1 am to 5 am", 
+              "NYC Begins Phase 1 Re-Opening", "NYC Begins Phase 2 Re-Opening",
+              "NYC Begins Phase 3 of Re-Opening (without indoor dining)",
+              "NYC Begins Phase 4 of Re-Opening (excluding malls, museums, and indoor dining/bars)",
+              "Elementary Students Return to Public School Classrooms across NYC",
+              "NYC Schools Switch to Fully Remote"),
+  start   = c("2020-03-01", "2020-03-08", "2020-03-16", "2020-03-17", "2020-04-30",
+              "2020-06-08", "2020-06-022", "2020-07-06", "2020-07-19", "2020-09-29", "2020-11-19"),
+  end     = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  style = c("background: #58DBA6;", "background: #62C5E9;", "background: #58DBA6;", 
+            "background: #62C5E9;", "background: #58DBA6;", "background: #62C5E9;", 
+            "background: #58DBA6;", "background: #62C5E9;", "background: #58DBA6;", 
+            "background: #62C5E9;", "background: #58DBA6;")
+)
+
+ui <- fluidPage(
+  
+timevisOutput("appts"),
+div("Selected items:", textOutput("selected", inline = TRUE)),
+div("Visible window:", textOutput("window", inline = TRUE)),
+tableOutput("table")
+)
+server <- function(input, output) {
+output$appts <- renderTimevis(
+timevis(
+data,
+options = list(editable = TRUE, multiselect = TRUE, align = "center")
+)
+)
+output$selected <- renderText(
+paste(input$appts_selected, collapse = " ")
+)
+output$window <- renderText(
+paste(input$appts_window[1], "to", input$appts_window[2])
+)
+output$table <- renderTable(
+input$appts_data
+)
+}
+shinyApp(ui, server)
+```
+
