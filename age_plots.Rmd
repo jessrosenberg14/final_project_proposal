@@ -6,6 +6,7 @@ output: github_document
 ```{r, load required packages, include = FALSE}
 library(tidyverse)
 library(plotly)
+library(lubridate)
 
 knitr::opts_chunk$set(
   message = FALSE, 
@@ -24,7 +25,11 @@ scale_fill_discrete = scale_fill_viridis_d
 ```
 
 ```{r, read in manhattan rides data}
+#read in manhattan rides data
 manhattan_rides_df <- read_csv("manhattan_rides.csv")
+
+# the code below saves trip_min, gender, age_group variables of manhattan_rides_df
+# and converts age_group and gender to factors
 
 trip_dur_age_gender_df <-
   manhattan_rides_df %>% 
@@ -37,6 +42,9 @@ trip_dur_age_gender_df <-
 ```
 
 ```{r, identify IQR and remove outliers}
+# looking at the data we can tell there are massive outliers in trip duration
+# so i am going to filter them out using the IQR method
+
 Q1 <- quantile(pull(trip_dur_age_gender_df, trip_min), probs = 0.25)
 Q3 <- quantile(pull(trip_dur_age_gender_df, trip_min), probs = 0.75)
 inter_quart <- IQR(pull(trip_dur_age_gender_df, trip_min))
@@ -49,8 +57,8 @@ trip_dur_age_gender_df <-
     )
 ```
 
-
 ```{r, trip_min by age_group and gender}
+#this generates a plot of boxplots of trip duration (minutes) by gender and age_group
 trip_dur_age_gender_df %>% 
   mutate(
     gender = str_to_sentence(gender)
@@ -60,7 +68,48 @@ trip_dur_age_gender_df %>%
     boxmode = "group",
     xaxis = list(title = "Age Range"), 
     yaxis = list(title = "Trip Duration (min)"), 
-    legend = list(title = list(text = '<b> Gender </b>'))
+    legend = list(title = list(text = "<b> Gender </b>"))
   )
 ```
 
+```{r, average age per day by gender}
+# this dataframe groups rides by gender and month
+# and provides the average age for each gender in that month
+# along with the standard deviation, standard error, lower bound, and upper bound
+# which are then used to create a plotly graph where we get average age per month for each gender
+# with 95% confidence bands around each line
+avg_age_per_month_df <-
+  read_csv("manhattan_rides.csv") %>% 
+  mutate(
+    date = floor_date(as_date(starttime), "month")
+  ) %>% 
+  select(date, gender, age) %>% 
+  group_by(date, gender) %>% 
+  summarize(
+    total = n(),
+    avg_age = mean(age),
+    sd_age = sd(age)
+  ) %>% 
+  mutate(
+    sem = sd_age/sqrt(total - 1), 
+    lower_bound = avg_age + qt(0.025, df = total - 1) * sem, 
+    upper_bound = avg_age - qt(0.025, df = total - 1) * sem
+  ) %>% 
+  ungroup()
+
+avg_age_plot <-
+  avg_age_per_month_df %>% 
+  mutate(
+    gender = str_to_sentence(gender)
+  ) %>% 
+  ggplot(aes(x = date, y = avg_age, color = gender)) +
+  geom_line(size = 1, alpha = 0.8) +
+  geom_ribbon(aes(ymin = lower_bound, ymax = upper_bound), alpha = 0.2)
+
+ggplotly(avg_age_plot) %>% 
+  layout(
+    xaxis = list(title = "Date"), 
+    yaxis = list(title = "Age"), 
+    legend = list(title = list(text = "<b> Gender </b>"))
+  )
+```
