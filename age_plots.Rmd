@@ -1,0 +1,66 @@
+---
+title: "dist_of_trip_duration_age_grp_gender"
+output: github_document
+---
+
+```{r, load required packages, include = FALSE}
+library(tidyverse)
+library(plotly)
+
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+```{r, read in manhattan rides data}
+manhattan_rides_df <- read_csv("manhattan_rides.csv")
+
+trip_dur_age_gender_df <-
+  manhattan_rides_df %>% 
+  select(trip_min, gender, age_group) %>% 
+  mutate(
+    age_group = factor(age_group, ordered = T,
+                       levels = c("18-25","26-35", "36-45", "46-55", "56-65", "66-85")),
+    gender = type.convert(gender, as.is = F)
+  )
+```
+
+```{r, identify IQR and remove outliers}
+Q1 <- quantile(pull(trip_dur_age_gender_df, trip_min), probs = 0.25)
+Q3 <- quantile(pull(trip_dur_age_gender_df, trip_min), probs = 0.75)
+inter_quart <- IQR(pull(trip_dur_age_gender_df, trip_min))
+
+trip_dur_age_gender_df <-
+  trip_dur_age_gender_df %>% 
+    filter(
+      trip_min >= Q1 - 1.5*inter_quart, 
+      trip_min <= Q3 + 1.5*inter_quart
+    )
+```
+
+
+```{r, trip_min by age_group and gender}
+trip_dur_age_gender_df %>% 
+  mutate(
+    gender = str_to_sentence(gender)
+  ) %>% 
+  plot_ly(x = ~age_group, y = ~trip_min, color = ~gender, type = "box", colors = "viridis") %>%  
+  layout(
+    boxmode = "group",
+    xaxis = list(title = "Age Range"), 
+    yaxis = list(title = "Trip Duration (min)"), 
+    legend = list(title = list(text = '<b> Gender </b>'))
+  )
+```
+
