@@ -55,4 +55,31 @@ manhattan_rides_df %>%
 
 Not that helpful, but not a meaningful difference in numbers of rides between 2019 and 2020 except maybe March/ April where there appears to be a slight dip
 
+```{r, average ride length per month}
+manhattan_rides_df %>% 
+  group_by(year) %>% 
+  mutate(
+    month = format(starttime, format = "%m")
+  ) %>% 
+  filter(tripduration < 1500) %>% 
+  ggplot(aes(x = month, y = tripduration)) + 
+  geom_boxplot() +
+  facet_grid(~year)
+```
 
+Looks like maybe the overall length of trips in 2019 was more consistent. 2020 had a bump in number of rides taken, especially in the summer.
+
+```{r, number of rides per month}
+manhattan_rides_df %>% 
+  group_by(year) %>% 
+  mutate(
+    month = format(starttime, format = "%m")
+  ) %>% 
+  group_by(year, month) %>% 
+  summarise(obs = n()) %>% 
+  ggplot(aes(x = month, y = obs, group = year, color = year)) + 
+  geom_line() +
+  facet_grid(~year)
+```
+
+Huge drop in monthly trips in April 2020. Lockdown started mid/late March so this coincides with people transitioning to WFH and largely staying inside to minimize contacts. The ride numbers bounce back quite a bit after this but not to 2019 levels.

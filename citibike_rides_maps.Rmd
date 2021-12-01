@@ -1,0 +1,65 @@
+---
+title: "citibike_maps"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(lubridate)
+library(shiny)
+library(leaflet)
+library(dplyr)
+library(plotly)
+library(ggplot2)
+library(ggthemes)
+library(gganimate)
+library(maps)
+library(dplyr)
+
+library(rgdal)
+library(sf)
+```
+
+
+```{r, read in manhattan rides data}
+manhattan_rides_df <- read_csv("manhattan_rides.csv")
+
+manhattan_rides_df <-
+  manhattan_rides_df %>% 
+  mutate(
+    day_of_week = factor(day_of_week, ordered = T, 
+                         levels = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")), 
+    year = factor(year), 
+    age_group = factor(age_group, ordered = T,
+                       levels = c("18-25","26-35", "36-45", "46-55", "56-65", "66-85"))
+  )
+
+manhattan_rides_df %>% 
+  group_by(age_group) %>% 
+  summarize(min = min(age), max = max(age), obs = n())
+```
+
+
+
+GGPlot - Updated for bikes 2019
+```{r}
+bike_map = manhattan_rides_df %>% 
+  filter(year == "2019") %>% 
+  mutate(
+    month = format(starttime, format = "%m"),
+    month = as.numeric(month)
+  ) %>%
+    group_by(month, end_station_longitude, end_station_latitude) %>% 
+  summarise(n_rides = n()) %>% 
+  ggplot() +
+  geom_point(aes(x = end_station_longitude, y = end_station_latitude, size = n_rides), alpha = 0.5) + 
+  transition_time(month) +
+  labs(title = "Month: {frame_time}", color = "Station") +
+  ease_aes("linear")
+
+animate(bike_map, duration = 12, fps = 1, width = 800, height = 800, renderer = gifski_renderer())
+anim_save("bike_map.gif")
+```
+
+So we can see that the number of rides increases in the summer months and decreases in winter months. (This animation only covers 2019).
+
