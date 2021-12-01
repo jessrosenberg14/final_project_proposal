@@ -18,6 +18,7 @@ library(dplyr)
 
 library(rgdal)
 library(sf)
+library(emo)
 ```
 
 
@@ -38,6 +39,20 @@ manhattan_rides_df %>%
   group_by(age_group) %>% 
   summarize(min = min(age), max = max(age), obs = n())
 ```
+
+```{r, read in hubs and hospital data}
+hubs_df = 
+  read_csv("hubs.csv")
+
+hospitals_df = 
+  read_csv("hospitals.csv")
+
+#testing emoji library
+emo::ji("heavy_dollar_sign")
+emo::ji("hospital")
+#doesn't display properly but we will get there!
+```
+
 
 
 

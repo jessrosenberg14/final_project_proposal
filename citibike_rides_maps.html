@@ -306,6 +306,32 @@ manhattan_rides_df %&gt;%
 ## 4 46-55        46    55  43430
 ## 5 56-65        56    65  26232
 ## 6 66-85        66    85   6734</code></pre>
+<pre class="r"><code>hubs_df = 
+  read_csv(&quot;hubs.csv&quot;)</code></pre>
+<pre><code>## Rows: 21 Columns: 3</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (1): Place
+## dbl (2): Lat, Long</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>hospitals_df = 
+  read_csv(&quot;hospitals.csv&quot;)</code></pre>
+<pre><code>## Rows: 48 Columns: 3</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr (1): Institution
+## dbl (2): Lat, Long</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>#testing emoji library
+emo::ji(&quot;heavy_dollar_sign&quot;)</code></pre>
+<pre><code>## &lt;U+0001F4B2&gt;</code></pre>
+<pre class="r"><code>emo::ji(&quot;hospital&quot;)</code></pre>
+<pre><code>## &lt;U+0001F3E5&gt;</code></pre>
+<pre class="r"><code>#doesn&#39;t display properly but we will get there!</code></pre>
 <p>GGPlot - Updated for bikes 2019</p>
 <pre class="r"><code>bike_map = manhattan_rides_df %&gt;% 
   filter(year == &quot;2019&quot;) %&gt;% 
