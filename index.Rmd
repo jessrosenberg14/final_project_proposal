@@ -1,5 +1,6 @@
 ---
 title: "Final Project"
+always_allow_html: true
 output: 
   html_document:
     code_folding: hide
