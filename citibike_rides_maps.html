@@ -273,6 +273,9 @@ $(document).ready(function () {
 <li>
   <a href="plotly.html">Plotly</a>
 </li>
+<li>
+  <a href="shiny_dashboard.html">Subway Shiny App</a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -496,8 +499,8 @@ new_month_gif</code></pre>
    addTiles() %&gt;% 
    setView( lng = -73.98776, lat = 40.74488, zoom = 10.5 ) %&gt;% 
    addProviderTiles(&quot;CartoDB.Positron&quot;)</code></pre>
-<div id="htmlwidget-e732e3e7068ada050273" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e732e3e7068ada050273">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}],"setView":[[40.74488,-73.98776],10.5,[]]},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4ff5e86c3fa21f10bdd6" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4ff5e86c3fa21f10bdd6">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}],"setView":[[40.74488,-73.98776],10.5,[]]},"evals":[],"jsHooks":[]}</script>
 <p>I think leaflet and plotly can work together, but then animation is getting into using shiny. Might be worth it?</p>
 <p>GGPlot - Updated for bikes 2019</p>
 <pre class="r"><code>bike_map = manhattan_rides_df %&gt;% 
