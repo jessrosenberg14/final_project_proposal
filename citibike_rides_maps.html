@@ -413,7 +413,8 @@ new_gif</code></pre>
 <li>need to fix legend to show red dots = hospitals and green dots = hubs</li>
 <li>maybe try to find more interesting way to display hospitals and hubs?</li>
 </ul>
-<pre class="r"><code>nyc = 
+<pre class="r"><code>#In retrospect I probably should have written a function to do this
+nyc = 
   as_tibble(
     map_data(&quot;state&quot;)
   ) %&gt;% 
@@ -441,10 +442,11 @@ bikes_month_2019 = manhattan_rides_df %&gt;%
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
   geom_point(data = bikes_month_2019, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
+  scale_size(range = c(1,8), name = &quot;Rides&quot;) +
   geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
   geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
   transition_time(month) +
-  labs(title = &quot;Month: {frame_time}&quot;, color = &quot;Rides&quot;) +
+  labs(title = &quot;2019 Month: {frame_time}&quot;, color = &quot;Rides&quot;) +
   enter_grow() +
   exit_shrink() +
   ease_aes(&quot;sine-in-out&quot;)
@@ -453,37 +455,37 @@ map_month_2020 =
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
   geom_point(data = bikes_month_2020, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
+  scale_size(range = c(1,8), name = &quot;Rides&quot;) +
   geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
   geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
   transition_time(month) +
-  labs(title = &quot;Month: {frame_time}&quot;, color = &quot;Rides&quot;) +
+  labs(title = &quot;2020 Month: {frame_time}&quot;, color = &quot;Rides&quot;) +
   enter_grow() +
   exit_shrink() +
   ease_aes(&quot;sine-in-out&quot;)
 
 #combining both animations using magick package
-a_month_gif = animate(map_month_2019, width = 400, height = 400)
-b_month_gif = animate(map_month_2020, width = 400, height = 400)
+a_month_gif = animate(map_month_2019, duration = 12, fps = 1, width = 400, height = 400)
+b_month_gif = animate(map_month_2020, duration = 12, fps = 1, width = 400, height = 400)
 
 a_month_mgif = image_read(a_month_gif)
 b_month_mgif = image_read(b_month_gif)
 
 new_month_gif = image_append(c(a_month_mgif[1], b_month_mgif[1]))
-for (i in 2:100) {
+for (i in 2:12) {
   combined_month = image_append(c(a_month_mgif[i], b_month_mgif[i]))
   new_month_gif = c(new_month_gif, combined_month)
 }
 
 new_month_gif</code></pre>
 <p><img src="citibike_rides_maps_files/figure-html/rides%20in%202019%20vs%202020%20by%20month-1.gif" /><!-- --></p>
-<pre class="r"><code>#In retrospect I probably should have written a function to do this</code></pre>
-<p>Oof. Needs troubleshooting.</p>
+<p>It works!!</p>
 <pre class="r"><code>leaflet() %&gt;% 
    addTiles() %&gt;% 
    setView( lng = -73.98776, lat = 40.74488, zoom = 10.5 ) %&gt;% 
    addProviderTiles(&quot;CartoDB.Positron&quot;)</code></pre>
-<div id="htmlwidget-6a3cc8fe2e94b8be1de6" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6a3cc8fe2e94b8be1de6">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}],"setView":[[40.74488,-73.98776],10.5,[]]},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-809f9b4cebef92730629" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-809f9b4cebef92730629">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}],"setView":[[40.74488,-73.98776],10.5,[]]},"evals":[],"jsHooks":[]}</script>
 <p>I think leaflet and plotly can work together, but then animation is getting into using shiny. Might be worth it?</p>
 <p>GGPlot - Updated for bikes 2019</p>
 <pre class="r"><code>bike_map = manhattan_rides_df %&gt;% 
