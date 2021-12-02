@@ -13,7 +13,6 @@ navbar:
       href: subway_rides.html    
     - text: "Plotly"
       href: plotly.html
-
 output:
   html_document:
     theme: yeti

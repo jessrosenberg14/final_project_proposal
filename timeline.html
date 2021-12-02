@@ -30,6 +30,7 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
@@ -220,6 +221,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -271,6 +275,14 @@ $(document).ready(function () {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">timeline</h1>
@@ -278,16 +290,13 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
-<pre><code>## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
-## ✓ tibble  3.1.5     ✓ dplyr   1.0.7
-## ✓ tidyr   1.1.4     ✓ stringr 1.4.0
-## ✓ readr   2.0.2     ✓ forcats 0.5.1</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(timevis)</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(timevis)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;timevis&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:shiny&#39;:
+## 
+##     runExample</code></pre>
 <p>Build a timeline</p>
 <pre class="r"><code>timeline &lt;- data.frame(
   id      = 1:11,
@@ -323,15 +332,15 @@ timevis(
   showZoom = TRUE,
   zoomFactor = 0.5,
   fit = TRUE,
-  width = &quot;110%&quot;,
+  width = &quot;110%&quot;
   )</code></pre>
-<div id="htmlwidget-b8d9756960b47665cfa2" class="timevis html-widget" style="width:110%;height:480px;">
+<div id="htmlwidget-69e33f71c4a778060d1a" class="timevis html-widget" style="width:110%;height:480px;">
 <div class="btn-group zoom-menu">
 <button type="button" class="btn btn-default btn-lg zoom-in" title="Zoom in">+</button>
 <button type="button" class="btn btn-default btn-lg zoom-out" title="Zoom out">-</button>
 </div>
 </div>
-<script type="application/json" data-for="htmlwidget-b8d9756960b47665cfa2">{"x":{"items":[{"id":"1","content":"First COVID Case in NYC","start":"2020-03-01","style":"border-color: black; background: #EB4646;"},{"id":"2","content":"NYC issues guidelines to avoid densely packed buses, subways, or trains","start":"2020-03-08","style":"border-color: black; background: #EB4646;"},{"id":"3","content":"NYC Public Schools Close","start":"2020-03-16","style":"border-color: black; background: #EB4646;"},{"id":"4","content":"NYC Bars and Restaurants Close for In-Person Dining","start":"2020-03-17","style":"border-color: black; background: #EB4646;"},{"id":"5","content":"Governor Cuomo announces NYC subway closures from 1 am to 5 am","start":"2020-04-30","style":"border-color: black; background: #EB4646;"},{"id":"6","content":"NYC Begins Phase 1 Re-Opening","start":"2020-06-08","style":"border-color: black; background: #46AEEB;"},{"id":"7","content":"NYC Begins Phase 2 Re-Opening","start":"2020-06-022","style":"border-color: black; background: #46AEEB;"},{"id":"8","content":"NYC Begins Phase 3 of Re-Opening (without indoor dining)","start":"2020-07-06","style":"border-color: black; background: #46AEEB;"},{"id":"9","content":"NYC Begins Phase 4 of Re-Opening (excluding malls, museums, and indoor dining/bars)","start":"2020-07-19","style":"border-color: black; background: #46AEEB;"},{"id":"10","content":"Elementary Students Return to Public School Classrooms across NYC","start":"2020-09-29","style":"border-color: black; background: #46AEEB;"},{"id":"11","content":"NYC Schools Switch to Fully Remote","start":"2020-11-19","style":"border-color: black; background: #EB4646;"}],"groups":null,"showZoom":true,"zoomFactor":0.5,"fit":true,"options":[],"height":null,"timezone":null,"api":[]},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-69e33f71c4a778060d1a">{"x":{"items":[{"id":"1","content":"First COVID Case in NYC","start":"2020-03-01","style":"border-color: black; background: #EB4646;"},{"id":"2","content":"NYC issues guidelines to avoid densely packed buses, subways, or trains","start":"2020-03-08","style":"border-color: black; background: #EB4646;"},{"id":"3","content":"NYC Public Schools Close","start":"2020-03-16","style":"border-color: black; background: #EB4646;"},{"id":"4","content":"NYC Bars and Restaurants Close for In-Person Dining","start":"2020-03-17","style":"border-color: black; background: #EB4646;"},{"id":"5","content":"Governor Cuomo announces NYC subway closures from 1 am to 5 am","start":"2020-04-30","style":"border-color: black; background: #EB4646;"},{"id":"6","content":"NYC Begins Phase 1 Re-Opening","start":"2020-06-08","style":"border-color: black; background: #46AEEB;"},{"id":"7","content":"NYC Begins Phase 2 Re-Opening","start":"2020-06-022","style":"border-color: black; background: #46AEEB;"},{"id":"8","content":"NYC Begins Phase 3 of Re-Opening (without indoor dining)","start":"2020-07-06","style":"border-color: black; background: #46AEEB;"},{"id":"9","content":"NYC Begins Phase 4 of Re-Opening (excluding malls, museums, and indoor dining/bars)","start":"2020-07-19","style":"border-color: black; background: #46AEEB;"},{"id":"10","content":"Elementary Students Return to Public School Classrooms across NYC","start":"2020-09-29","style":"border-color: black; background: #46AEEB;"},{"id":"11","content":"NYC Schools Switch to Fully Remote","start":"2020-11-19","style":"border-color: black; background: #EB4646;"}],"groups":null,"showZoom":true,"zoomFactor":0.5,"fit":true,"options":[],"height":null,"timezone":null,"api":[]},"evals":[],"jsHooks":[]}</script>
 
 
 
@@ -366,6 +375,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

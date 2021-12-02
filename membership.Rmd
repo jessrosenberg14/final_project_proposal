@@ -9,10 +9,6 @@ library(lubridate)
 library(gganimate)
 library(zoo)
 library(tis)
-library(scales)
-library(plotly)
-library(ggiraph)
-library(ggplot2)
 ```
 
 Input Citibike Membership Datafile
@@ -50,20 +46,9 @@ measures_of_interest =
 measures_of_interest %>%
   ggplot(aes(x = date, y = count)) +
   geom_line(aes(group = measure, color = measure)) +
-  geom_point(aes(group = seq_along(date), color = measure)) +
+  scale_color_viridis_d(option = "D") +
   transition_reveal(date) +
-  scale_x_date(breaks = "3 months", labels = date_format("%b-%Y")) +
-  scale_colour_discrete(name = "Membership Type",
-                        breaks = c("ct_annual_members", "ct_single_day_passes",
-                                   "ct_single_trip_passes"),
-                        labels = c("Annual Passes Renewed or Purchased",
-                                    "Single-Day Passes Purchased", 
-                                   "Single-Trip Passes Purchased")) +
-  labs(x = "Date", y = "Count") +
-  ggtitle("CitiBike Memberships Purchased by Month in NYC and Jersey City") +
   theme_minimal() +
-  theme(legend.position = "bottom") +
-  guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
