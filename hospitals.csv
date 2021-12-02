@@ -1,49 +1,38 @@
 ﻿Institution,Lat,Long
-Bellevue Hospital Center,40.740458802872,-73.978397800000
-Henry J. Carter Specialty Hospital and Nursing Facility,40.804207836831,-73.938870314231
-Coler-Goldwater Specialty Hospital,40.771329502408,73.940567466534
-Gracie Square Hospital,40.770727407303,-73.948878515371
-Harlem Hospital Center,40.815089578988,-73.937148390371
-Hospital for Special Surgery,40.766054633063,-73.950016821075
-Lenox Hill Hospital,40.774774951433,-73.956858092076
-"Manhattan Eye, Ear and Throat Hospital",40.764657045369,-73.958294039229
-Manhattan Psychiatric Center,40.790202722981,-73.927763682257
-VA NY Harbor Healthcare System,40.748678485129,-73.923180276804
-Memorial Sloan Kettering Cancer Center,40.765519863487,-73.951823429017
-Metropolitan Hospital Center,40.785473462042,-73.942253567090
-Mount Sinai Beth Israel,40.734000153789,-73.979646690968
-Mount Sinai Hospital,40.790727865201,-73.947081016487
-Mount Sinai Morningside,40.806115716283,-73.957596653428
-Mount Sinai West,40.770542206809,-73.982768092078
-NewYork–Presbyterian - Allen Hospital,40.873637484743,-73.909214391470
-NewYork–Presbyterian/Columbia University Medical Center,40.843409726261,-73.946177652365
-NewYork–Presbyterian/Lower Manhattan Hospital,40.711040278217,-74.002785605757
-NewYork-Presbyterian/Weill Cornell Medical Center,40.765119870062,-73.950467468787
-NewYork-Presbyterian Alexandra Cohen Hospital for Women and Newborns,40.767099766718,-73.949060418798
-NewYork-Presbyterian David H. Koch Center,40.765529971389,-73.953296613036
-Morgan Stanley Children’s Hospital of NewYork-Presbyterian,40.840396310774,-73.939533374456
-Sloane Hospital for Women at NewYork-Presbyterian Morgan Stanley Children's Hospital,40.841671864907,-73.939401021971
-NewYork-Presbyterian Komansky Children's Hospital,40.765419242574,-73.951136690955
-NewYork-Presbyterian Och Spine Hospital,40.874047431742,-73.909891782817
-New York Eye and Ear Infirmary of Mount Sinai,40.732470048708,-73.982051229041
-NYU Langone Orthopedic Hospital,40.734993825266,-73.980754721088
-NYU Langone Medical Center,40.744635063127,-73.972620436425
-Rockefeller Institute Hospital,40.762082112867,-73.953794167101
-Hospital for Joint Diseases Orthopedic Institute,40.734921763637,-73.979050176751
-Metropolitan Hospital Center,40.785947333458,-73.943355335845
-Tisch Hospital,40.743009354040,-73.971075484137
-Hassenfeld Children’s Hospital at NYU Langone,40.744191225935,-73.968751584699
-Mount Sinai Kravis Children's Hospital,40.790744298680,-73.950912960261
-MSK Pediatric Day Hospital,40.765214344478,-73.954940543806
-Lenox Health Greenwich Village,40.738517143842,-73.997175399481
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
+Bellevue Hospital Center,40.7404588,-73.9783978
+Henry J. Carter Specialty Hospital and Nursing Facility,40.80420784,-73.93887031
+Coler-Goldwater Specialty Hospital,40.7713295,-73.94056747
+Gracie Square Hospital,40.77072741,-73.94887852
+Harlem Hospital Center,40.81508958,-73.93714839
+Hospital for Special Surgery,40.76605463,-73.95001682
+Lenox Hill Hospital,40.77477495,-73.95685809
+"Manhattan Eye, Ear and Throat Hospital",40.76465705,-73.95829404
+Manhattan Psychiatric Center,40.79020272,-73.92776368
+VA NY Harbor Healthcare System,40.74867849,-73.92318028
+Memorial Sloan Kettering Cancer Center,40.76551986,-73.95182343
+Metropolitan Hospital Center,40.78547346,-73.94225357
+Mount Sinai Beth Israel,40.73400015,-73.97964669
+Mount Sinai Hospital,40.79072787,-73.94708102
+Mount Sinai Morningside,40.80611572,-73.95759665
+Mount Sinai West,40.77054221,-73.98276809
+NewYork–Presbyterian - Allen Hospital,40.87363748,-73.90921439
+NewYork–Presbyterian/Columbia University Medical Center,40.84340973,-73.94617765
+NewYork–Presbyterian/Lower Manhattan Hospital,40.71104028,-74.00278561
+NewYork-Presbyterian/Weill Cornell Medical Center,40.76511987,-73.95046747
+NewYork-Presbyterian Alexandra Cohen Hospital for Women and Newborns,40.76709977,-73.94906042
+NewYork-Presbyterian David H. Koch Center,40.76552997,-73.95329661
+Morgan Stanley Children’s Hospital of NewYork-Presbyterian,40.84039631,-73.93953337
+Sloane Hospital for Women at NewYork-Presbyterian Morgan Stanley Children's Hospital,40.84167186,-73.93940102
+NewYork-Presbyterian Komansky Children's Hospital,40.76541924,-73.95113669
+NewYork-Presbyterian Och Spine Hospital,40.87404743,-73.90989178
+New York Eye and Ear Infirmary of Mount Sinai,40.73247005,-73.98205123
+NYU Langone Orthopedic Hospital,40.73499383,-73.98075472
+NYU Langone Medical Center,40.74463506,-73.97262044
+Rockefeller Institute Hospital,40.76208211,-73.95379417
+Hospital for Joint Diseases Orthopedic Institute,40.73492176,-73.97905018
+Metropolitan Hospital Center,40.78594733,-73.94335534
+Tisch Hospital,40.74300935,-73.97107548
+Hassenfeld Children’s Hospital at NYU Langone,40.74419123,-73.96875158
+Mount Sinai Kravis Children's Hospital,40.7907443,-73.95091296
+MSK Pediatric Day Hospital,40.76521434,-73.95494054
+Lenox Health Greenwich Village,40.73851714,-73.9971754
