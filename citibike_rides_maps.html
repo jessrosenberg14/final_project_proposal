@@ -32,6 +32,16 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-binding-2.0.4.1/leaflet.js"></script>
+<script src="site_libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="site_libs/leaflet-providers-plugin-2.0.4.1/leaflet-providers-plugin.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -332,6 +342,74 @@ emo::ji(&quot;heavy_dollar_sign&quot;)</code></pre>
 <pre class="r"><code>emo::ji(&quot;hospital&quot;)</code></pre>
 <pre><code>## &lt;U+0001F3E5&gt;</code></pre>
 <pre class="r"><code>#doesn&#39;t display properly but we will get there!</code></pre>
+<pre class="r"><code>nyc = 
+  as_tibble(
+    map_data(&quot;state&quot;)
+  ) %&gt;% 
+  filter(subregion == &quot;manhattan&quot;)
+
+bikes_2019 = manhattan_rides_df %&gt;% 
+  filter(year == &quot;2019&quot;) %&gt;% 
+    group_by(stop_date, end_station_longitude, end_station_latitude) %&gt;% 
+  summarise(n_rides = n()) %&gt;% 
+  mutate(
+    date = paste0(&quot;2019-&quot;, stop_date),
+         date = as.Date(date, &quot;%Y-%m-%d&quot;))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;stop_date&#39;, &#39;end_station_longitude&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>bikes_2020 = manhattan_rides_df %&gt;%
+  filter(year == &quot;2020&quot;) %&gt;% 
+    group_by(stop_date, end_station_longitude, end_station_latitude) %&gt;% 
+  summarise(n_rides = n()) %&gt;% 
+  mutate(
+    date = paste0(&quot;2020-&quot;, stop_date),
+         date = as.Date(date, &quot;%Y-%m-%d&quot;))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;stop_date&#39;, &#39;end_station_longitude&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>map_2019 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
+  geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
+  transition_time(date) +
+  labs(title = &quot;Month: {frame_time}&quot;, color = &quot;Station&quot;) +
+  ease_aes(&quot;linear&quot;)
+
+animate(map_2019, duration = 25, fps = 5, width = 800, height = 800, renderer = gifski_renderer())
+anim_save(&quot;map_2019.gif&quot;)
+
+map_2020 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
+  geom_point(data = bikes_2020, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
+  transition_time(date) +
+  labs(title = &quot;Month: {frame_time}&quot;, color = &quot;Station&quot;) +
+  ease_aes(&quot;linear&quot;)
+
+animate(map_2020, duration = 25, fps = 5, width = 800, height = 800, renderer = gifski_renderer())
+anim_save(&quot;map_2020.gif&quot;)
+
+#combining both animations using magick package
+a_gif = animate(map_2019, width = 400, height = 400)
+b_gif = animate(map_2020, width = 400, height = 400)
+
+a_mgif = image_read(a_gif)
+b_mgif = image_read(b_gif)
+
+new_gif = image_append(c(a_mgif[1], b_mgif[1]))
+for (i in 2:100) {
+  combined = image_append(c(a_mgif[i], b_mgif[i]))
+  new_gif = c(new_gif, combined)
+}
+
+new_gif</code></pre>
+<p><img src="citibike_rides_maps_files/figure-html/unnamed-chunk-1-1.gif" /><!-- --></p>
+<pre class="r"><code>#still needs adjusting so it is not so glitchy-looking
+#also seems like the projection for the Manhattan polygon and the citibike data do not quite match up
+#need to figure out adding datapoints for hospitals and hubs. For some reason adding them broke the map when I tried</code></pre>
+<pre class="r"><code>leaflet() %&gt;% 
+   addTiles() %&gt;% 
+   setView( lng = -73.98776, lat = 40.74488, zoom = 10.5 ) %&gt;% 
+   addProviderTiles(&quot;CartoDB.Positron&quot;)</code></pre>
+<div id="htmlwidget-b175ec67f40a5e4dc4bf" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b175ec67f40a5e4dc4bf">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}],"setView":[[40.74488,-73.98776],10.5,[]]},"evals":[],"jsHooks":[]}</script>
 <p>GGPlot - Updated for bikes 2019</p>
 <pre class="r"><code>bike_map = manhattan_rides_df %&gt;% 
   filter(year == &quot;2019&quot;) %&gt;% 
@@ -348,7 +426,7 @@ emo::ji(&quot;heavy_dollar_sign&quot;)</code></pre>
   ease_aes(&quot;linear&quot;)</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;month&#39;, &#39;end_station_longitude&#39;. You can override using the `.groups` argument.</code></pre>
 <pre class="r"><code>animate(bike_map, duration = 12, fps = 1, width = 800, height = 800, renderer = gifski_renderer())</code></pre>
-<p><img src="citibike_rides_maps_files/figure-html/unnamed-chunk-1-1.gif" /><!-- --></p>
+<p><img src="citibike_rides_maps_files/figure-html/unnamed-chunk-3-1.gif" /><!-- --></p>
 <pre class="r"><code>anim_save(&quot;bike_map.gif&quot;)</code></pre>
 <p>So we can see that the number of rides increases in the summer months and decreases in winter months. (This animation only covers 2019).</p>
 

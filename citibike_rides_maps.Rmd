@@ -19,6 +19,7 @@ library(dplyr)
 library(rgdal)
 library(sf)
 library(emo)
+library(magick)
 ```
 
 
@@ -53,6 +54,78 @@ emo::ji("hospital")
 #doesn't display properly but we will get there!
 ```
 
+```{r}
+nyc = 
+  as_tibble(
+    map_data("state")
+  ) %>% 
+  filter(subregion == "manhattan")
+
+bikes_2019 = manhattan_rides_df %>% 
+  filter(year == "2019") %>% 
+    group_by(stop_date, end_station_longitude, end_station_latitude) %>% 
+  summarise(n_rides = n()) %>% 
+  mutate(
+    date = paste0("2019-", stop_date),
+         date = as.Date(date, "%Y-%m-%d"))
+
+bikes_2020 = manhattan_rides_df %>%
+  filter(year == "2020") %>% 
+    group_by(stop_date, end_station_longitude, end_station_latitude) %>% 
+  summarise(n_rides = n()) %>% 
+  mutate(
+    date = paste0("2020-", stop_date),
+         date = as.Date(date, "%Y-%m-%d"))
+
+map_2019 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = "grey", alpha = 0.5) +
+  geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
+  transition_time(date) +
+  labs(title = "Month: {frame_time}", color = "Station") +
+  ease_aes("linear")
+
+animate(map_2019, duration = 25, fps = 5, width = 800, height = 800, renderer = gifski_renderer())
+anim_save("map_2019.gif")
+
+map_2020 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = "grey", alpha = 0.5) +
+  geom_point(data = bikes_2020, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
+  transition_time(date) +
+  labs(title = "Month: {frame_time}", color = "Station") +
+  ease_aes("linear")
+
+animate(map_2020, duration = 25, fps = 5, width = 800, height = 800, renderer = gifski_renderer())
+anim_save("map_2020.gif")
+
+#combining both animations using magick package
+a_gif = animate(map_2019, width = 400, height = 400)
+b_gif = animate(map_2020, width = 400, height = 400)
+
+a_mgif = image_read(a_gif)
+b_mgif = image_read(b_gif)
+
+new_gif = image_append(c(a_mgif[1], b_mgif[1]))
+for (i in 2:100) {
+  combined = image_append(c(a_mgif[i], b_mgif[i]))
+  new_gif = c(new_gif, combined)
+}
+
+new_gif
+#still needs adjusting so it is not so glitchy-looking
+#also seems like the projection for the Manhattan polygon and the citibike data do not quite match up
+#need to figure out adding datapoints for hospitals and hubs. For some reason adding them broke the map when I tried
+```
+
+
+
+```{r}
+leaflet() %>% 
+   addTiles() %>% 
+   setView( lng = -73.98776, lat = 40.74488, zoom = 10.5 ) %>% 
+   addProviderTiles("CartoDB.Positron")
+```
 
 
 
