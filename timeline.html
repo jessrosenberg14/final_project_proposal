@@ -287,13 +287,7 @@ $(document).ready(function () {
 <pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(timevis)
-library(shiny)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;shiny&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:timevis&#39;:
-## 
-##     runExample</code></pre>
+<pre class="r"><code>library(timevis)</code></pre>
 <p>Build a timeline</p>
 <pre class="r"><code>timeline &lt;- data.frame(
   id      = 1:11,
@@ -315,50 +309,19 @@ library(shiny)</code></pre>
             &quot;background: #62C5E9;&quot;, &quot;background: #62C5E9;&quot;)
 )
 
-style &lt;- &quot;
-.vis-timeline {
-  border-color: #269026;
-  background-color: lightgreen;
-  font-size: 15px;
-  color: green;
-}
-
-.vis-item {
-  border: 2px solid #5ace5a;
-  font-size: 12pt;
-  background: #d9ffd9;
-  font-family: cursive;
-  padding: 5px;
-}
-&quot;
-
 timevis(
   timeline,
   showZoom = TRUE,
   zoomFactor = 0.5,
   fit = TRUE,
   width = &quot;110%&quot;)</code></pre>
-<div id="htmlwidget-3a5e0f97c2bc7a1716df" class="timevis html-widget" style="width:110%;height:480px;">
+<div id="htmlwidget-1abeab16e3cb352f954d" class="timevis html-widget" style="width:110%;height:480px;">
 <div class="btn-group zoom-menu">
 <button type="button" class="btn btn-default btn-lg zoom-in" title="Zoom in">+</button>
 <button type="button" class="btn btn-default btn-lg zoom-out" title="Zoom out">-</button>
 </div>
 </div>
-<script type="application/json" data-for="htmlwidget-3a5e0f97c2bc7a1716df">{"x":{"items":[{"id":"1","content":"First COVID Case in NYC","start":"2020-03-01","style":"background: #62C5E9;"},{"id":"2","content":"NYC issues guidelines to avoid densely packed buses, subways, or trains","start":"2020-03-08","style":"background: #62C5E9;"},{"id":"3","content":"NYC Public Schools Close","start":"2020-03-16","style":"background: #62C5E9;"},{"id":"4","content":"NYC Bars and Restaurants Close for In-Person Dining","start":"2020-03-17","style":"background: #62C5E9;"},{"id":"5","content":"Governor Cuomo announces NYC subway closures from 1 am to 5 am","start":"2020-04-30","style":"background: #62C5E9;"},{"id":"6","content":"NYC Begins Phase 1 Re-Opening","start":"2020-06-08","style":"background: #62C5E9;"},{"id":"7","content":"NYC Begins Phase 2 Re-Opening","start":"2020-06-022","style":"background: #62C5E9;"},{"id":"8","content":"NYC Begins Phase 3 of Re-Opening (without indoor dining)","start":"2020-07-06","style":"background: #62C5E9;"},{"id":"9","content":"NYC Begins Phase 4 of Re-Opening (excluding malls, museums, and indoor dining/bars)","start":"2020-07-19","style":"background: #62C5E9;"},{"id":"10","content":"Elementary Students Return to Public School Classrooms across NYC","start":"2020-09-29","style":"background: #62C5E9;"},{"id":"11","content":"NYC Schools Switch to Fully Remote","start":"2020-11-19","style":"background: #62C5E9;"}],"groups":null,"showZoom":true,"zoomFactor":0.5,"fit":true,"options":[],"height":null,"timezone":null,"api":[]},"evals":[],"jsHooks":[]}</script>
-<p>SHINY?</p>
-<pre class="r"><code>if (interactive()) {
-library(shiny)}
-### Most basic example
-  
-shinyApp(
-ui = fluidPage(timevisOutput(&quot;timeline&quot;)),
-server = function(input, output) {
-output$timeline &lt;- renderTimevis(
-timevis()
-)
-}
-)</code></pre>
-<p><div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div></p>
+<script type="application/json" data-for="htmlwidget-1abeab16e3cb352f954d">{"x":{"items":[{"id":"1","content":"First COVID Case in NYC","start":"2020-03-01","style":"background: #62C5E9;"},{"id":"2","content":"NYC issues guidelines to avoid densely packed buses, subways, or trains","start":"2020-03-08","style":"background: #62C5E9;"},{"id":"3","content":"NYC Public Schools Close","start":"2020-03-16","style":"background: #62C5E9;"},{"id":"4","content":"NYC Bars and Restaurants Close for In-Person Dining","start":"2020-03-17","style":"background: #62C5E9;"},{"id":"5","content":"Governor Cuomo announces NYC subway closures from 1 am to 5 am","start":"2020-04-30","style":"background: #62C5E9;"},{"id":"6","content":"NYC Begins Phase 1 Re-Opening","start":"2020-06-08","style":"background: #62C5E9;"},{"id":"7","content":"NYC Begins Phase 2 Re-Opening","start":"2020-06-022","style":"background: #62C5E9;"},{"id":"8","content":"NYC Begins Phase 3 of Re-Opening (without indoor dining)","start":"2020-07-06","style":"background: #62C5E9;"},{"id":"9","content":"NYC Begins Phase 4 of Re-Opening (excluding malls, museums, and indoor dining/bars)","start":"2020-07-19","style":"background: #62C5E9;"},{"id":"10","content":"Elementary Students Return to Public School Classrooms across NYC","start":"2020-09-29","style":"background: #62C5E9;"},{"id":"11","content":"NYC Schools Switch to Fully Remote","start":"2020-11-19","style":"background: #62C5E9;"}],"groups":null,"showZoom":true,"zoomFactor":0.5,"fit":true,"options":[],"height":null,"timezone":null,"api":[]},"evals":[],"jsHooks":[]}</script>
 
 
 

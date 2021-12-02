@@ -6,7 +6,6 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(timevis)
-library(shiny)
 ```
 
 Build a timeline
@@ -37,6 +36,7 @@ timevis(
   showZoom = TRUE,
   zoomFactor = 0.5,
   fit = TRUE,
-  width = "110%")
+  width = "110%",
+  )
 ```
 
