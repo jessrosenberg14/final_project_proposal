@@ -11,7 +11,7 @@ Notes/ questions:
 - tone from winning projects last year
 - confirm MTA data source
 - confirm with Zoe % change is 3/1/2020 to EOY 2020
-- WHY WONT INLINE R CODE WORK (Variables count)
+- why inline r code wont work (Variables count)
 - Hide and show code chunks
 - Which plots do we want to include? 
 - Delete prompts
@@ -53,7 +53,7 @@ Fortunately, the available data did allow us to explore our other questions and 
 
 2.    **Travel Patterns**: Where are CitiBike riders going? What are common starting points and destinations? How long are typical CitiBike rides? Do destinations shift from commercial hubs like Times Square and Brookfield Place to healthcare hubs and major hospitals between 2019 and 2020? 
 
-3.    **Commuting Services**: How did CitiBike ridership change, if at all, due to COVID-19? Is the change mirrored in MTA data or does a change in CitiBike ridership compensate for a change in MTA ridership?
+3.    **Commuting Services**: How did CitiBike ridership change, if at all, due to COVID-19? How has public transportation and CitiBike ridership together changed due to COVID-19? 
 
 # Data
 
