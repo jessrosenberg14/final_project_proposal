@@ -35,6 +35,8 @@ turnstiles_2019_shiny = turnstiles_2019_shiny %>%
     values_to = "turnstile_count",
   ) %>% 
     mutate(borough = recode(borough, Q = "Queens", Bk = "Brooklyn", Bx = "Bronx", M = "Manhattan", SI = "Staten Island")) 
+
+write.csv(turnstiles_2019_shiny, "./shiny_data.csv")
 ```
 
 ### Ridership Data Across Multiple Public Transport Systems in NYC 
