@@ -1,41 +1,46 @@
 ---
-title: "subway_rides"
-output: github_document
+title: "Subway Rides"
+always_allow_html: true
+output:
+  html_document:
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(dplyr)
 library(lubridate)
-library(shiny)
-library(leaflet)
-library(dplyr)
 library(plotly)
-library(ggplot2)
-library(ggthemes)
-library(gganimate)
-library(maps)
-library(dplyr)
 ```
 
-```{r, ridership data for 2019 and 2020, Manhattan Only}
-turnstiles_2019_m = read_csv("2019-turnstile.csv") %>% 
-  filter(borough == "M") %>% 
+## Data Cleaning
+### Turnstile Data Cleaning for Shiny App 
+```{r, ridership data for 2019 and 2020, Manhattan Only, message = FALSE, warning = FALSE}
+turnstiles_2019 = read_csv("./2019-turnstile.csv") %>% 
   mutate(gtfs_latitude = as.numeric(gtfs_latitude),
-         gtfs_longitude = as.numeric(gtfs_longitude))
+         gtfs_longitude = as.numeric(gtfs_longitude),
+         day_month = format(as.Date(date), "%d-%m"))
   
   
-turnstiles_2020_m = read_csv("2020-turnstile.csv") %>% 
-    filter(borough == "M") %>% 
+turnstiles_2020 = read_csv("./2020-turnstile.csv") %>% 
     mutate(gtfs_latitude = as.numeric(gtfs_latitude),
-         gtfs_longitude = as.numeric(gtfs_longitude))
+         gtfs_longitude = as.numeric(gtfs_longitude),
+         day_month = format(as.Date(date), "%d-%m"))
 
-turnstiles_19_20_m = rbind(turnstiles_2019_m, turnstiles_2020_m)
+turnstiles_2019_shiny = turnstiles_2019 %>% filter(date >= as.Date("2019-01-01") & date <= as.Date("2019-07-01"))
+turnstiles_2019_shiny = turnstiles_2019_shiny %>% 
+   pivot_longer(
+    cols = entries:exits,
+    names_to = "turnstile_type",
+    values_to = "turnstile_count",
+  ) %>% 
+    mutate(borough = recode(borough, Q = "Queens", Bk = "Brooklyn", Bx = "Bronx", M = "Manhattan", SI = "Staten Island")) 
+
+write.csv(turnstiles_2019_shiny, "./shiny_data.csv")
 ```
 
-ter = total estimated ridership
-pc = percent change 
-
-```{r, ridership data 3/1/2020 - today}
+### Ridership Data Across Multiple Public Transport Systems in NYC 
+```{r, ridership data 3/1/2020 - today, message = FALSE, warning = FALSE}
 ridership_covid_changes = read_csv("covid-ridership.csv") %>% 
   janitor::clean_names() %>% 
   mutate(date = as.Date(date, "%m/%d/%Y")) %>% 
@@ -71,19 +76,9 @@ ridership_covid_pc_tidy =
           percent_change = as.numeric(percent_change))
 ```
 
-Ridership Line Plot 
-2 ways (ggplot and ploty)
-```{r, plotting ridership post COVID}
-# Using ggplot
-post_covid_transit = ridership_covid_pc_tidy %>% 
-  ungroup() %>% 
-  drop_na() %>% 
-  ggplot(aes(x = date, y = percent_change, color = transit_system)) +
-  geom_smooth(aes(color = transit_system))
-
-ggplotly(post_covid_transit)
-
-# Using plotly 
+## Graphs 
+## Ridership Data Acorss Multiple Transport Systems in NYC 
+```{r, plotting ridership post COVID, message = FALSE, warning = FALSE}
 ridership_covid_pc_tidy %>% 
   ungroup() %>% 
   drop_na() %>% 
@@ -99,233 +94,5 @@ ridership_covid_pc_tidy %>%
     yaxis = list(title = "Percent Change")
   )
 
-```
-
-
-Practice Map 
-```{r}
-sample = turnstiles_2019_m %>% 
-  filter(date == as.Date('2019-01-20'))
-
-pal <- colorNumeric(palette = "Blues",
-                    domain = sample$exits)
-
-labs <- lapply(seq(nrow(sample)), function(i) {
-  paste0( '<p> Station Name: ', sample[i, "stop_name"], '<p></p> Subway Lines: ', sample[i, "daytime_routes"])
-})
-
-my_leaf = leaflet(sample) %>%
-  setView(-74.00, 40.78, zoom = 11) %>%
-  addProviderTiles("CartoDB.Positron") %>% 
-  addCircleMarkers(
-    lat = ~ gtfs_latitude, 
-    lng = ~ gtfs_longitude, 
-    color = ~pal(exits),
-    stroke = FALSE, 
-    fillOpacity = 0.85,
-    label = lapply(labs, htmltools::HTML)) %>% 
-  addLegend("bottomright", pal = pal, values = ~exits,
-    title = "2019 Ridership",
-    opacity = 1)
-```
-
-This One Works :) 
-```{r}
-ui <- fluidPage(
-    
-  titlePanel("Manhattan Subway Ridership Overtime"),
-  
-  sliderInput(
-    inputId = "date",
-    label = "Dates",
-    min = as.Date("2019-01-01","%Y-%m-%d"),
-    max = as.Date("2020-12-25","%Y-%m-%d"),
-    value  = as.Date("2019-01-01","%Y-%m-%d"),
-    timeFormat = "%Y-%m-%d",
-    step = 1,
-    animate = animationOptions(interval = 200, loop = FALSE)
-  ),
-
-  mainPanel(
-    leafletOutput("nyc_map")
-  )
-)
-
-server <- function(input, output){
-    
-    d = reactive({
-      day = input$date
-      
-      d = turnstiles_19_20_m %>% 
-        filter(date == day) 
-    })
-  
-    output$nyc_map <- renderLeaflet({
-
-        leaflet(d()) %>%
-        addProviderTiles("CartoDB.Positron") %>% 
-        addCircleMarkers(
-          lat = ~ gtfs_latitude, 
-          lng = ~ gtfs_longitude, 
-          color = ~pal(exits),
-          stroke = FALSE, 
-          fillOpacity = 0.85,
-          label = lapply(labs, htmltools::HTML)) %>% 
-        addLegend("bottomright", pal = pal, values = ~exits,
-                  title = "Ridership",
-                 opacity = 1)
-    })
-}
-
-shinyApp(ui, server)
-```
-
-
-
-Creating Map with Shiny Attempt Kinda Works 
-```{r}
-pal <- colorNumeric(palette = "Blues",
-                    domain = turnstiles_2019_m$exits)
-dateRange = 
-  turnstiles_2019_m %>% 
-  summarise(min = min(date), max = max(date)) %>% 
-  as_vector() %>% 
-  as_date()
-
-ui <- fluidPage(
-    
-  titlePanel("Manhattan Subway Ridership Overtime"),
-  
-  dateRangeInput(
-  inputId = "date",
-  label = "Dates",
-  start = as.Date("2019-01-01","%Y-%m-%d"),
-  end = as.Date("2019-12-31","%Y-%m-%d"),
-  min = as.Date("2019-01-01","%Y-%m-%d"),
-  max = as.Date("2019-12-31","%Y-%m-%d"),
-  format = "yyyy-mm-dd",
-  separator = " to ",
-  width = NULL,
-  autoclose = TRUE
-  ),
-  
-  mainPanel(
-    leafletOutput("nyc_map")
-  )
-)
-
-server <- function(input, output){
-    
-    output$nyc_map <- renderLeaflet({
-
-        leaflet(turnstiles_2019_m) %>%
-        addProviderTiles("CartoDB.Positron") %>% 
-        addCircleMarkers(
-          lat = ~ gtfs_latitude, 
-          lng = ~ gtfs_longitude, 
-          color = ~pal(exits),
-          stroke = FALSE, 
-          fillOpacity = 0.85,
-          label = lapply(labs, htmltools::HTML)) %>% 
-        addLegend("bottomright", pal = pal, values = ~exits,
-                  title = "2019 Ridership",
-                 opacity = 1)
-    })
-}
-
-shinyApp(ui, server)
-```
-
-GGPlot - Messing Around 
-```{r}
-map = turnstiles_2019_m %>% 
-  ggplot() +
-  geom_point(aes(x = gtfs_longitude, y = gtfs_latitude, color = exits, size = exits), alpha = 0.5) + 
-  transition_time(date) +
-  labs(title = "Date: {frame_time}", color = "Ridership") +
-  ease_aes("linear")
-
-animate(map, duration = 10, fps = 20, width = 800, height = 800, renderer = gifski_renderer())
-anim_save("map.gif")
-```
-
-Creating Map with Slider in Shiny
-```{r}
-pal <- colorNumeric(palette = "Blues",
-                    domain = turnstiles_2019_m$exits)
-dateRange = 
-  turnstiles_2019_m %>% 
-  summarise(min = min(date), max = max(date)) %>% 
-  as_vector() %>% 
-  as_date()
-
-ui <- fluidPage(
-    
-  titlePanel(
-    h1("Manhattan Subway Ridership Overtime", style = "padding-bottom: 20px")
-    ),
-    
-  sidebarLayout(
-    sidebarPanel(
-      dateRangeInput(
-        inputID = 'dateRange',
-        label = "Date range:",
-        start = dateRange[1], end = dateRange[1] %m+% years(1),
-        min = dateRange[1], max = dateRange[2],
-        separator = " to ", format = "dd/mm/yyyy",
-        startview = 'month', weekstart = 1
-      ),
-      sliderInput(
-        "animation",
-        "Looping Date: ",
-        min = dateRange[1], max = dateRange[2],
-        value = dateRange[2], timeFormat = "%Y-%m-%d",
-        animate = animationOptions(interval = 200, loop = FALSE)
-      ),
-    ),
-    mainPanel(
-      plotlyOutput(outputId = "nyc_map")
-    )
-  )
-)
-
-
-server <- function(input, output, session){
-    
-    observeEvent(input$dateRange, {
-      updateSliderInput(
-        session, "animation", 
-        min = as_date(as.character(input$dateRange[1])),
-        max = as_date(as.character(input$dateRange[2]))
-      )
-    })
-  
-    output$nyc_map <- renderPlotly({
-        filterData = turnstiles_2019_m %>% 
-          filter(
-            between(
-              date,
-              as_date(as.character(input$dateRange[1])),
-              as_date(as.character(input$dateRange[2]))
-            )
-          )
-        
-        
-        leaflet(turnstiles_2019_m) %>%
-        addProviderTiles("CartoDB.Positron") %>% 
-        addCircleMarkers(
-          lat = ~ gtfs_latitude, 
-          lng = ~ gtfs_longitude, 
-          color = ~pal(exits),
-          stroke = FALSE, 
-          fillOpacity = 0.85,
-          label = lapply(labs, htmltools::HTML)) %>% 
-        addLegend("bottomright", pal = pal, values = ~exits,
-                  title = "2019 Ridership",
-                 opacity = 1)
-    })
-}
-
-shinyApp(ui, server)
 ```
 
