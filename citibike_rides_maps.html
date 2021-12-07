@@ -13,8 +13,8 @@
 
 <title>citibike_maps</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
-<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -32,16 +32,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
-<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
-<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
-<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
-<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
-<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
-<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
-<script src="site_libs/leaflet-binding-2.0.4.1/leaflet.js"></script>
-<script src="site_libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
-<script src="site_libs/leaflet-providers-plugin-2.0.4.1/leaflet-providers-plugin.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -363,12 +353,16 @@ bikes_2019 = manhattan_rides_df %&gt;%
 <pre class="r"><code>map_2019 = 
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
-  geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
-  scale_size(range = c(2.5, 12.5), name = &quot;Rides&quot;) +
+  geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.5, color = n_rides), alpha = 0.5) +
   geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
   geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
   transition_time(date) +
-  labs(title = &quot;Date: {frame_time}&quot;, color = &quot;Rides&quot;) +
+  labs(
+    title = &quot;Date: {frame_time}&quot;, 
+    color = &quot;Rides&quot;,
+    x = &quot;Longitude&quot;,
+    y = &quot;Latitude&quot;) +
+  scale_fill_continuous(breaks = c(2.5, 5.0, 7.5, 10.0, 12.5)) +
   enter_grow() +
   exit_shrink() +
   ease_aes(&quot;sine-in-out&quot;)
@@ -379,12 +373,18 @@ anim_save(&quot;map_2019.gif&quot;)
 map_2020 = 
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
-  geom_point(data = bikes_2020, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
-  scale_size(range = c(2.5,12.5), name = &quot;Rides&quot;) +
+  geom_point(data = bikes_2020, aes(x = end_station_longitude, y = end_station_latitude, size = 0.5, color = n_rides), alpha = 0.5) +
+scale_fill_continuous(limits = c(0,12.5), breaks = c(0, 2.5, 5.0, 7.5, 10.0, 12.5)) +
   geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
   geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
   transition_time(date) +
-  labs(title = &quot;Date: {frame_time}&quot;, color = &quot;Rides&quot;) +
+  labs(
+    title = &quot;Date: {frame_time}&quot;, 
+    color = &quot;Rides&quot;,
+    x = &quot;Longitude&quot;,
+    y = &quot;Latitude&quot;
+    ) +
+  theme(legend.position = &quot;none&quot;) +
   enter_grow() +
   exit_shrink() +
   ease_aes(&quot;sine-in-out&quot;)
@@ -393,14 +393,14 @@ animate(map_2020, duration = 25, fps = 5, width = 800, height = 800, renderer = 
 anim_save(&quot;map_2020.gif&quot;)
 
 #combining both animations using magick package
-a_gif = animate(map_2019, width = 400, height = 400)
-b_gif = animate(map_2020, width = 400, height = 400)
+a_gif = animate(map_2019, duration = 30, fps = 2, width = 400, height = 400)
+b_gif = animate(map_2020, duration = 30, fps = 2,  width = 400, height = 400)
 
 a_mgif = image_read(a_gif)
 b_mgif = image_read(b_gif)
 
 new_gif = image_append(c(a_mgif[1], b_mgif[1]))
-for (i in 2:100) {
+for (i in 2:60) {
   combined = image_append(c(a_mgif[i], b_mgif[i]))
   new_gif = c(new_gif, combined)
 }
@@ -411,7 +411,7 @@ new_gif</code></pre>
 <li>gif still needs adjusting so it is not so glitchy-looking (need to slow down animation I think)</li>
 <li>also seems like the projection for the Manhattan polygon and the citibike data do not quite match up</li>
 <li>need to fix legend to show red dots = hospitals and green dots = hubs</li>
-<li>maybe try to find more interesting way to display hospitals and hubs?</li>
+<li>Need to find a more interesting way to display hospitals and hubs</li>
 </ul>
 <pre class="r"><code>#In retrospect I probably should have written a function to do this
 nyc = 
@@ -441,7 +441,7 @@ bikes_month_2019 = manhattan_rides_df %&gt;%
 <pre class="r"><code>map_month_2019 = 
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
-  geom_point(data = bikes_month_2019, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
+  geom_point(data = bikes_month_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
   scale_size(range = c(1,8), name = &quot;Rides&quot;) +
   geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
   geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
@@ -451,10 +451,11 @@ bikes_month_2019 = manhattan_rides_df %&gt;%
   exit_shrink() +
   ease_aes(&quot;sine-in-out&quot;)
 
+
 map_month_2020 = 
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
-  geom_point(data = bikes_month_2020, aes(x = end_station_longitude, y = end_station_latitude, size = n_rides, color = n_rides), alpha = 0.5) +
+  geom_point(data = bikes_month_2020, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
   scale_size(range = c(1,8), name = &quot;Rides&quot;) +
   geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
   geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
@@ -480,32 +481,59 @@ for (i in 2:12) {
 new_month_gif</code></pre>
 <p><img src="citibike_rides_maps_files/figure-html/rides%20in%202019%20vs%202020%20by%20month-1.gif" /><!-- --></p>
 <p>It works!!</p>
-<pre class="r"><code>leaflet() %&gt;% 
-   addTiles() %&gt;% 
-   setView( lng = -73.98776, lat = 40.74488, zoom = 10.5 ) %&gt;% 
-   addProviderTiles(&quot;CartoDB.Positron&quot;)</code></pre>
-<div id="htmlwidget-809f9b4cebef92730629" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-809f9b4cebef92730629">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}],"setView":[[40.74488,-73.98776],10.5,[]]},"evals":[],"jsHooks":[]}</script>
-<p>I think leaflet and plotly can work together, but then animation is getting into using shiny. Might be worth it?</p>
-<p>GGPlot - Updated for bikes 2019</p>
-<pre class="r"><code>bike_map = manhattan_rides_df %&gt;% 
-  filter(year == &quot;2019&quot;) %&gt;% 
-  mutate(
-    month = format(starttime, format = &quot;%m&quot;),
-    month = as.numeric(month)
-  ) %&gt;%
-    group_by(month, end_station_longitude, end_station_latitude) %&gt;% 
-  summarise(n_rides = n()) %&gt;% 
+<pre class="r"><code>daily_map_2019 = 
   ggplot() +
-  geom_point(aes(x = end_station_longitude, y = end_station_latitude, size = n_rides), alpha = 0.5) + 
-  transition_time(month) +
-  labs(title = &quot;Month: {frame_time}&quot;, color = &quot;Station&quot;) +
-  ease_aes(&quot;linear&quot;)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;month&#39;, &#39;end_station_longitude&#39;. You can override using the `.groups` argument.</code></pre>
-<pre class="r"><code>animate(bike_map, duration = 12, fps = 1, width = 800, height = 800, renderer = gifski_renderer())</code></pre>
-<p><img src="citibike_rides_maps_files/figure-html/2019%20animation%20by%20month-1.gif" /><!-- --></p>
-<pre class="r"><code>anim_save(&quot;bike_map.gif&quot;)</code></pre>
-<p>So we can see that the number of rides increases in the summer months and decreases in winter months.</p>
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
+  geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
+  geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
+  geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
+  transition_time(date) +
+  labs(
+    title = &quot;Date: {frame_time}&quot;, 
+    color = &quot;Rides&quot;,
+    x = &quot;Longitude&quot;,
+    y = &quot;Latitude&quot;) +
+  scale_fill_continuous(breaks = c(2.5, 5.0, 7.5, 10.0, 12.5)) +
+  enter_grow() +
+  exit_shrink() +
+  ease_aes(&quot;sine-in-out&quot;) +
+  coord_cartesian(ylim = c(40.725, 40.825), xlim = c(-74.0125, -73.85))
+
+daily_map_2020 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
+  geom_point(data = bikes_2020, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
+scale_fill_continuous(limits = c(0,12.5), breaks = c(0, 2.5, 5.0, 7.5, 10.0, 12.5)) +
+  geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
+  geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
+  transition_time(date) +
+  labs(
+    title = &quot;Date: {frame_time}&quot;, 
+    color = &quot;Rides&quot;,
+    x = &quot;Longitude&quot;,
+    y = &quot;Latitude&quot;
+    ) +
+  theme(legend.position = &quot;none&quot;) +
+  enter_grow() +
+  exit_shrink() +
+  ease_aes(&quot;sine-in-out&quot;) +
+  coord_cartesian(ylim = c(40.725, 40.825), xlim = c(-74.0125, -73.85))
+
+#combining both animations using magick package
+a_daily_gif = animate(daily_map_2019, duration = 30, fps = 2, width = 400, height = 400)
+b_daily_gif = animate(daily_map_2020, duration = 30, fps = 2, width = 400, height = 400)
+
+a_daily_mgif = image_read(a_daily_gif)
+b_daily_mgif = image_read(b_daily_gif)
+
+new_daily_gif = image_append(c(a_daily_mgif[1], b_daily_mgif[1]))
+for (i in 2:12) {
+  combined_daily = image_append(c(a_daily_mgif[i], b_daily_mgif[i]))
+  new_daily_gif = c(new_daily_gif, combined_daily)
+}
+
+new_daily_gif</code></pre>
+<p><img src="citibike_rides_maps_files/figure-html/zoomed%20daily%20map-1.gif" /><!-- --></p>
 
 
 
