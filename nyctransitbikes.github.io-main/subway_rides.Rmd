@@ -1,0 +1,98 @@
+---
+title: "Subway Rides"
+always_allow_html: true
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(lubridate)
+library(plotly)
+```
+
+## Data Cleaning
+### Turnstile Data Cleaning for Shiny App 
+```{r, ridership data for 2019 and 2020, Manhattan Only, message = FALSE, warning = FALSE}
+turnstiles_2019 = read_csv("./2019-turnstile.csv") %>% 
+  mutate(gtfs_latitude = as.numeric(gtfs_latitude),
+         gtfs_longitude = as.numeric(gtfs_longitude),
+         day_month = format(as.Date(date), "%d-%m"))
+  
+  
+turnstiles_2020 = read_csv("./2020-turnstile.csv") %>% 
+    mutate(gtfs_latitude = as.numeric(gtfs_latitude),
+         gtfs_longitude = as.numeric(gtfs_longitude),
+         day_month = format(as.Date(date), "%d-%m"))
+
+turnstiles_2019_shiny = turnstiles_2019 %>% filter(date >= as.Date("2019-01-01") & date <= as.Date("2019-07-01"))
+turnstiles_2019_shiny = turnstiles_2019_shiny %>% 
+   pivot_longer(
+    cols = entries:exits,
+    names_to = "turnstile_type",
+    values_to = "turnstile_count",
+  ) %>% 
+    mutate(borough = recode(borough, Q = "Queens", Bk = "Brooklyn", Bx = "Bronx", M = "Manhattan", SI = "Staten Island")) 
+
+write.csv(turnstiles_2019_shiny, "./shiny_data.csv")
+```
+
+### Ridership Data Across Multiple Public Transport Systems in NYC 
+```{r, ridership data 3/1/2020 - today, message = FALSE, warning = FALSE}
+ridership_covid_changes = read_csv("covid-ridership.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(date = as.Date(date, "%m/%d/%Y")) %>% 
+  rename(buses_ter = buses_total_estimated_ridership) %>% 
+  rename(lirr_ter = lirr_total_estimated_ridership) %>% 
+  rename(metro_north_ter = metro_north_total_estimated_ridership) %>% 
+  rename(subways_ter = subways_total_estimated_ridership) %>% 
+  rename(subways_pc = subways_percent_change_from_pre_pandemic_equivalent_day) %>% 
+  rename(metro_north_pc = metro_north_percent_change_from_2019_monthly_weekday_saturday_sunday_average) %>% 
+  rename(lirr_pc = lirr_percent_change_from_2019_monthly_weekday_saturday_sunday_average) %>% 
+  rename(buses_pc = buses_percent_change_from_pre_pandemic_equivalent_day) %>% 
+  rename(bridges_and_tunnels_pc = bridges_and_tunnels_percent_change_from_pre_pandemic_equivalent_day) %>% 
+  rename(access_a_ride_ter = access_a_ride_total_scheduled_trips) %>% 
+  rename(access_a_ride_pc = access_a_ride_percent_change_from_pre_pandemic_equivalent_day)
+
+
+ridership_covid_changes_2020 = ridership_covid_changes %>% 
+  filter(date <= as.Date('2020-12-31'))
+
+ridership_covid_pc_tidy = 
+  ridership_covid_changes_2020 %>% 
+  
+  select(date, access_a_ride_pc, bridges_and_tunnels_pc, buses_pc, lirr_pc, metro_north_pc, subways_pc) %>% 
+  
+  pivot_longer(
+    c(access_a_ride_pc:subways_pc), 
+    names_to = "transit_system",
+    values_to = "percent_change"
+  ) %>% 
+  
+   mutate(transit_system = gsub("_pc", "", transit_system),
+          percent_change = gsub("%", "", percent_change),
+          percent_change = as.numeric(percent_change))
+```
+
+## Graphs 
+## Ridership Data Acorss Multiple Transport Systems in NYC 
+```{r, plotting ridership post COVID, message = FALSE, warning = FALSE}
+ridership_covid_pc_tidy %>% 
+  ungroup() %>% 
+  drop_na() %>% 
+  plot_ly(
+    x = ~date, 
+    y = ~percent_change, 
+    color = ~transit_system,
+    type = "scatter",
+    mode = "lines") %>% 
+  layout(
+    title = "Ridership Transit System Percent Change Following COVID",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Percent Change")
+  )
+
+```
+
