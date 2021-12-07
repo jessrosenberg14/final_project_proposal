@@ -13,6 +13,10 @@ navbar:
       href: subway_rides.html    
     - text: "Plotly"
       href: plotly.html
+    - text: "Subway Shiny App"
+      href: shiny_dashboard.html
+    - text: "Final Project Report"
+      href: Report.html
 output:
   html_document:
     theme: yeti

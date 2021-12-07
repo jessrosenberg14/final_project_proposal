@@ -30,6 +30,7 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
@@ -215,6 +216,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -259,12 +263,23 @@ $(document).ready(function () {
 <li>
   <a href="plotly.html">Plotly</a>
 </li>
+<li>
+  <a href="shiny_dashboard.html">Subway Shiny App</a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
 <div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
 
@@ -275,15 +290,15 @@ $(document).ready(function () {
 
 <pre class="r"><code>manhattan_rides_df &lt;- read_csv(&quot;manhattan_rides.csv&quot;)</code></pre>
 <pre><code>## Rows: 271106 Columns: 24</code></pre>
-<pre><code>## -- Column specification --------------------------------------------------------
+<pre><code>## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr   (8): start_station_name, end_station_name, usertype, gender, day_of_we...
 ## dbl  (12): tripduration, start_station_id, start_station_latitude, start_sta...
 ## dttm  (2): starttime, stoptime
 ## time  (2): start_time, stop_time</code></pre>
 <pre><code>## 
-## i Use `spec()` to retrieve the full column specification for this data.
-## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>manhattan_rides_df &lt;-
   manhattan_rides_df %&gt;% 
   mutate(
@@ -297,7 +312,7 @@ $(document).ready(function () {
 manhattan_rides_df %&gt;% 
   group_by(age_group) %&gt;% 
   summarize(min = min(age), max = max(age), obs = n())</code></pre>
-<pre><code>## # A tibble: 6 x 4
+<pre><code>## # A tibble: 6 × 4
 ##   age_group   min   max    obs
 ##   &lt;ord&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;int&gt;
 ## 1 18-25        18    25  35068
@@ -310,24 +325,24 @@ manhattan_rides_df %&gt;%
   read_csv(&quot;hubs.csv&quot;) %&gt;% 
   drop_na()</code></pre>
 <pre><code>## Rows: 21 Columns: 3</code></pre>
-<pre><code>## -- Column specification --------------------------------------------------------
+<pre><code>## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (1): Place
 ## dbl (2): Lat, Long</code></pre>
 <pre><code>## 
-## i Use `spec()` to retrieve the full column specification for this data.
-## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>hospitals_df = 
   read_csv(&quot;hospitals.csv&quot;) %&gt;% 
   drop_na()</code></pre>
 <pre><code>## Rows: 37 Columns: 3</code></pre>
-<pre><code>## -- Column specification --------------------------------------------------------
+<pre><code>## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (1): Institution
 ## dbl (2): Lat, Long</code></pre>
 <pre><code>## 
-## i Use `spec()` to retrieve the full column specification for this data.
-## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>nyc = 
   as_tibble(
     map_data(&quot;state&quot;)
@@ -481,7 +496,26 @@ for (i in 2:12) {
 new_month_gif</code></pre>
 <p><img src="citibike_rides_maps_files/figure-html/rides%20in%202019%20vs%202020%20by%20month-1.gif" /><!-- --></p>
 <p>It works!!</p>
+<<<<<<< HEAD
 <pre class="r"><code>daily_map_2019 = 
+=======
+<pre class="r"><code>leaflet() %&gt;% 
+   addTiles() %&gt;% 
+   setView( lng = -73.98776, lat = 40.74488, zoom = 10.5 ) %&gt;% 
+   addProviderTiles(&quot;CartoDB.Positron&quot;)</code></pre>
+<div id="htmlwidget-4ff5e86c3fa21f10bdd6" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4ff5e86c3fa21f10bdd6">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}],"setView":[[40.74488,-73.98776],10.5,[]]},"evals":[],"jsHooks":[]}</script>
+<p>I think leaflet and plotly can work together, but then animation is getting into using shiny. Might be worth it?</p>
+<p>GGPlot - Updated for bikes 2019</p>
+<pre class="r"><code>bike_map = manhattan_rides_df %&gt;% 
+  filter(year == &quot;2019&quot;) %&gt;% 
+  mutate(
+    month = format(starttime, format = &quot;%m&quot;),
+    month = as.numeric(month)
+  ) %&gt;%
+    group_by(month, end_station_longitude, end_station_latitude) %&gt;% 
+  summarise(n_rides = n()) %&gt;% 
+>>>>>>> 95f4f84ece12bc10c3a6913f5bd7c4fe3462c17e
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
   geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
@@ -568,6 +602,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

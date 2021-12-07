@@ -1,5 +1,6 @@
 ---
 title: "Final Project Report"
+always_allow_html: true
 output: 
   html_document:
     toc: true
@@ -8,14 +9,9 @@ output:
 ---
 
 Notes/ questions: 
-- tone from winning projects last year
 - confirm MTA data source
 - confirm with Zoe % change is 3/1/2020 to EOY 2020
-- WHY WONT INLINE R CODE WORK (Variables count)
-- Hide and show code chunks
-- Which plots do we want to include? 
 - Delete prompts
-- Decide which exploratory things we want to include
 
 # Motivation 
 
@@ -53,7 +49,7 @@ Fortunately, the available data did allow us to explore our other questions and 
 
 2.    **Travel Patterns**: Where are CitiBike riders going? What are common starting points and destinations? How long are typical CitiBike rides? Do destinations shift from commercial hubs like Times Square and Brookfield Place to healthcare hubs and major hospitals between 2019 and 2020? 
 
-3.    **Commuting Services**: How did CitiBike ridership change, if at all, due to COVID-19? Is the change mirrored in MTA data or does a change in CitiBike ridership compensate for a change in MTA ridership?
+3.    **Commuting Services**: How did CitiBike ridership change, if at all, due to COVID-19? How has public transportation and CitiBike ridership together changed due to COVID-19? 
 
 # Data
 
@@ -91,7 +87,7 @@ We used two MTA datasets:
 
 ### Turnstile data
 
-Subway turnstiles data from [2019](https://data.ny.gov/Transportation/Turnstile-Usage-Data-2019/xfn5-qji9) and [2020](https://data.ny.gov/Transportation/Turnstile-Usage-Data-2020/py8k-a8wg) were downloaded from data.ny.gov. These datasets included information about the number of entries and exits from a given turnstile across all subway stations. We filtered to only Manhattan stations and converted latitude and longitude of stations to numeric variables, creating the `turnstiles_2019_m` and `turnstiles_2020_m` datsets. We then merged those dataset, resulting in the datafile `turnstiles_19_20_m`, which includes 12 variables, some of which are listed below: 
+Subway turnstiles data from [2019](https://data.ny.gov/Transportation/Turnstile-Usage-Data-2019/xfn5-qji9) and [2020](https://data.ny.gov/Transportation/Turnstile-Usage-Data-2020/py8k-a8wg) were downloaded from data.ny.gov. These datasets included information about the number of entries and exits from a given turnstile across all subway stations. We filtered to only Manhattan stations and converted latitude and longitude of stations to numeric variables, creating the `turnstiles_2019_m` and `turnstiles_2020_m` datsets. We then merged those dataset, resulting in the datafile `turnstiles_19_20_m`, which includes `r ncol(turnstiles_19_20_m)` variables, some of which are listed below: 
 
 *   `stop_name`: Station name
 *   `daytime_routes`: Subway lines 

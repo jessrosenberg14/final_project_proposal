@@ -1,6 +1,9 @@
 ---
 title: lookup_table_stations
-output: github_document
+always_allow_html: true
+output:
+  html_document:
+    code_folding: hide
 ---
 
 ```{r, load required packages, include = FALSE}

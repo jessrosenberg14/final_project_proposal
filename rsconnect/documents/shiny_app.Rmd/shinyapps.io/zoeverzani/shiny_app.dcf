@@ -1,0 +1,11 @@
+name: shiny_app
+title:
+username:
+account: zoeverzani
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5226531
+bundleId: 5306607
+url: https://zoeverzani.shinyapps.io/shiny_app/
+when: 1638213890.94712
+lastSyncTime: 1638213890.94714
