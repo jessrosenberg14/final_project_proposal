@@ -291,18 +291,9 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>manhattan_rides_df &lt;- read_csv(&quot;manhattan_rides.csv&quot;)</code></pre>
-<pre><code>## Rows: 271106 Columns: 24</code></pre>
-<pre><code>## -- Column specification --------------------------------------------------------
-## Delimiter: &quot;,&quot;
-## chr   (8): start_station_name, end_station_name, usertype, gender, day_of_we...
-## dbl  (12): tripduration, start_station_id, start_station_latitude, start_sta...
-## dttm  (2): starttime, stoptime
-## time  (2): start_time, stop_time</code></pre>
-<pre><code>## 
-## i Use `spec()` to retrieve the full column specification for this data.
-## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>manhattan_rides_df &lt;-
+<pre class="r"><code>manhattan_rides_df &lt;- read_csv(&quot;manhattan_rides.csv&quot;)
+
+manhattan_rides_df &lt;-
   manhattan_rides_df %&gt;% 
   mutate(
     day_of_week = factor(day_of_week, ordered = T, 
@@ -326,26 +317,11 @@ manhattan_rides_df %&gt;%
 ## 6 66-85        66    85   6734</code></pre>
 <pre class="r"><code>hubs_df = 
   read_csv(&quot;hubs.csv&quot;) %&gt;% 
-  drop_na()</code></pre>
-<pre><code>## Rows: 21 Columns: 3</code></pre>
-<pre><code>## -- Column specification --------------------------------------------------------
-## Delimiter: &quot;,&quot;
-## chr (1): Place
-## dbl (2): Lat, Long</code></pre>
-<pre><code>## 
-## i Use `spec()` to retrieve the full column specification for this data.
-## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>hospitals_df = 
+  drop_na()
+
+hospitals_df = 
   read_csv(&quot;hospitals.csv&quot;) %&gt;% 
   drop_na()</code></pre>
-<pre><code>## Rows: 37 Columns: 3</code></pre>
-<pre><code>## -- Column specification --------------------------------------------------------
-## Delimiter: &quot;,&quot;
-## chr (1): Institution
-## dbl (2): Lat, Long</code></pre>
-<pre><code>## 
-## i Use `spec()` to retrieve the full column specification for this data.
-## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>nyc = 
   as_tibble(
     map_data(&quot;state&quot;)
@@ -358,17 +334,17 @@ bikes_2019 = manhattan_rides_df %&gt;%
   summarise(n_rides = n()) %&gt;% 
   mutate(
     date = paste0(&quot;2019-&quot;, stop_date),
-         date = as.Date(date, &quot;%Y-%m-%d&quot;))</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;stop_date&#39;, &#39;end_station_longitude&#39;. You can override using the `.groups` argument.</code></pre>
-<pre class="r"><code>bikes_2020 = manhattan_rides_df %&gt;%
+         date = as.Date(date, &quot;%Y-%m-%d&quot;))
+
+bikes_2020 = manhattan_rides_df %&gt;%
   filter(year == &quot;2020&quot;) %&gt;% 
     group_by(stop_date, end_station_longitude, end_station_latitude) %&gt;% 
   summarise(n_rides = n()) %&gt;% 
   mutate(
     date = paste0(&quot;2020-&quot;, stop_date),
-         date = as.Date(date, &quot;%Y-%m-%d&quot;))</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;stop_date&#39;, &#39;end_station_longitude&#39;. You can override using the `.groups` argument.</code></pre>
-<pre class="r"><code>map_2019 = 
+         date = as.Date(date, &quot;%Y-%m-%d&quot;))
+
+map_2019 = 
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
   geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.5, color = n_rides), alpha = 0.5) +
@@ -445,18 +421,18 @@ bikes_month_2019 = manhattan_rides_df %&gt;%
     month = as.numeric(month)
   ) %&gt;% 
   group_by(month, end_station_longitude, end_station_latitude) %&gt;% 
-  summarise(n_rides = n())</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;month&#39;, &#39;end_station_longitude&#39;. You can override using the `.groups` argument.</code></pre>
-<pre class="r"><code>bikes_month_2020 = manhattan_rides_df %&gt;%
+  summarise(n_rides = n())
+
+bikes_month_2020 = manhattan_rides_df %&gt;%
   filter(year == &quot;2020&quot;) %&gt;% 
   mutate(
     month = format(starttime, format = &quot;%m&quot;),
     month = as.numeric(month)
   ) %&gt;%
   group_by(month, end_station_longitude, end_station_latitude) %&gt;% 
-  summarise(n_rides = n())</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;month&#39;, &#39;end_station_longitude&#39;. You can override using the `.groups` argument.</code></pre>
-<pre class="r"><code>map_month_2019 = 
+  summarise(n_rides = n())
+
+map_month_2019 = 
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
   geom_point(data = bikes_month_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
