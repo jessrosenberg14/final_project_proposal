@@ -1,4 +1,4 @@
-final_project_proposal
+final\_project\_proposal
 ================
 
 ## The group members (names and UNIs)
@@ -38,8 +38,8 @@ Website (with dashboard) and final report.
 
 **Planned analyses**
 
--   We will be performing descriptive analyses: # of new stations, # of
-    new users, ages of users, sex of users, # of riders (MTA)
+-   We will be performing descriptive analyses: \# of new stations, \#
+    of new users, ages of users, sex of users, \# of riders (MTA)
 
 -   What amount of reduction in MTA ridership is compensated by increase
     in Citi Bike ridership
