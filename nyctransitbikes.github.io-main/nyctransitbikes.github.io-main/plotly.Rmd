@@ -1,0 +1,16 @@
+---
+title: "Plotly"
+always_allow_html: true
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r}
+library(tidyverse)
+library(p8105.datasets)
+library(plotly)
+library(leaflet)
+library(tidygeocoder)
+library(ggridges)
+```
