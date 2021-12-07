@@ -553,14 +553,14 @@ a_daily_mgif = image_read(a_daily_gif)
 b_daily_mgif = image_read(b_daily_gif)
 
 new_daily_gif = image_append(c(a_daily_mgif[1], b_daily_mgif[1]))
-for (i in 2:12) {
+for (i in 2:60) {
   combined_daily = image_append(c(a_daily_mgif[i], b_daily_mgif[i]))
   new_daily_gif = c(new_daily_gif, combined_daily)
 }
 
 new_daily_gif</code></pre>
 <p><img src="citibike_rides_maps_files/figure-html/zoomed%20daily%20map-1.gif" /><!-- --></p>
-<p>Should run through June but currently only runs through March???</p>
+<p>May want to adjust window?</p>
 
 
 
