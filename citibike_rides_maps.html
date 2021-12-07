@@ -301,20 +301,7 @@ manhattan_rides_df &lt;-
     year = factor(year), 
     age_group = factor(age_group, ordered = T,
                        levels = c(&quot;18-25&quot;,&quot;26-35&quot;, &quot;36-45&quot;, &quot;46-55&quot;, &quot;56-65&quot;, &quot;66-85&quot;))
-  )
-
-manhattan_rides_df %&gt;% 
-  group_by(age_group) %&gt;% 
-  summarize(min = min(age), max = max(age), obs = n())</code></pre>
-<pre><code>## # A tibble: 6 x 4
-##   age_group   min   max    obs
-##   &lt;ord&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;int&gt;
-## 1 18-25        18    25  35068
-## 2 26-35        26    35 102948
-## 3 36-45        36    45  56694
-## 4 46-55        46    55  43430
-## 5 56-65        56    65  26232
-## 6 66-85        66    85   6734</code></pre>
+  )</code></pre>
 <pre class="r"><code>hubs_df = 
   read_csv(&quot;hubs.csv&quot;) %&gt;% 
   drop_na()
@@ -402,10 +389,8 @@ for (i in 2:60) {
 new_gif</code></pre>
 <p><img src="citibike_rides_maps_files/figure-html/side%20by%20side%20animation-1.gif" /><!-- --></p>
 <ul>
-<li>gif still needs adjusting so it is not so glitchy-looking (need to slow down animation I think)</li>
-<li>also seems like the projection for the Manhattan polygon and the citibike data do not quite match up</li>
-<li>need to fix legend to show red dots = hospitals and green dots = hubs</li>
-<li>Need to find a more interesting way to display hospitals and hubs</li>
+<li>ggplot does not seem to let me manually adjust the legend scaling</li>
+<li>Need to find a more interesting way to display hospitals and hubs?</li>
 </ul>
 <pre class="r"><code>#In retrospect I probably should have written a function to do this
 nyc = 
