@@ -13,8 +13,8 @@
 
 <title>Travel Patterns</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
-<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -305,6 +305,7 @@ manhattan_rides_df &lt;-
     age_group = factor(age_group, ordered = T,
                        levels = c(&quot;18-25&quot;,&quot;26-35&quot;, &quot;36-45&quot;, &quot;46-55&quot;, &quot;56-65&quot;, &quot;66-85&quot;))
   )</code></pre>
+<<<<<<< HEAD:nyctransitbikes.github.io-main/citibike_rides_maps.html
 <pre class="r"><code>manhattan_rides_df %&gt;% 
   group_by(day_of_week, year) %&gt;% 
   summarize(obs = n()) %&gt;% 
@@ -316,6 +317,8 @@ manhattan_rides_df &lt;-
   theme(plot.title = element_text(hjust = 0.5))</code></pre>
 <p><img src="citibike_rides_maps_files/figure-html/Rides%20by%20day%20of%20week-1.png" width="672" /></p>
 <p>Fewer rides during the week in 2020 (presumably because of WFH), but more rides on the weekends (presumably because people avoid subway/ ubers)</p>
+=======
+>>>>>>> 40c95ebec78d896afe009ce71430a5a529ec3df0:citibike_rides_maps.html
 <pre class="r"><code>hubs_df = 
   read_csv(&quot;hubs.csv&quot;) %&gt;% 
   drop_na()
@@ -323,6 +326,92 @@ manhattan_rides_df &lt;-
 hospitals_df = 
   read_csv(&quot;hospitals.csv&quot;) %&gt;% 
   drop_na()</code></pre>
+<<<<<<< HEAD:nyctransitbikes.github.io-main/citibike_rides_maps.html
+=======
+<pre class="r"><code>nyc = 
+  as_tibble(
+    map_data(&quot;state&quot;)
+  ) %&gt;% 
+  filter(subregion == &quot;manhattan&quot;)
+
+bikes_2019 = manhattan_rides_df %&gt;% 
+  filter(year == &quot;2019&quot;) %&gt;% 
+    group_by(stop_date, end_station_longitude, end_station_latitude) %&gt;% 
+  summarise(n_rides = n()) %&gt;% 
+  mutate(
+    date = paste0(&quot;2019-&quot;, stop_date),
+         date = as.Date(date, &quot;%Y-%m-%d&quot;))
+
+bikes_2020 = manhattan_rides_df %&gt;%
+  filter(year == &quot;2020&quot;) %&gt;% 
+    group_by(stop_date, end_station_longitude, end_station_latitude) %&gt;% 
+  summarise(n_rides = n()) %&gt;% 
+  mutate(
+    date = paste0(&quot;2020-&quot;, stop_date),
+         date = as.Date(date, &quot;%Y-%m-%d&quot;))
+
+map_2019 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
+  geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.5, color = n_rides), alpha = 0.5) +
+  geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
+  geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
+  transition_time(date) +
+  labs(
+    title = &quot;Date: {frame_time}&quot;, 
+    color = &quot;Rides&quot;,
+    x = &quot;Longitude&quot;,
+    y = &quot;Latitude&quot;) +
+  scale_fill_continuous(breaks = c(2.5, 5.0, 7.5, 10.0, 12.5)) +
+  enter_grow() +
+  exit_shrink() +
+  ease_aes(&quot;sine-in-out&quot;)
+
+animate(map_2019, duration = 25, fps = 5, width = 800, height = 800, renderer = gifski_renderer())
+anim_save(&quot;map_2019.gif&quot;)
+
+map_2020 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = &quot;grey&quot;, alpha = 0.5) +
+  geom_point(data = bikes_2020, aes(x = end_station_longitude, y = end_station_latitude, size = 0.5, color = n_rides), alpha = 0.5) +
+scale_fill_continuous(limits = c(0,12.5), breaks = c(0, 2.5, 5.0, 7.5, 10.0, 12.5)) +
+  geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = &quot;red&quot;) + 
+  geom_point(data = hubs_df, aes(x = Long, y = Lat), color = &quot;green&quot;) +
+  transition_time(date) +
+  labs(
+    title = &quot;Date: {frame_time}&quot;, 
+    color = &quot;Rides&quot;,
+    x = &quot;Longitude&quot;,
+    y = &quot;Latitude&quot;
+    ) +
+  theme(legend.position = &quot;none&quot;) +
+  enter_grow() +
+  exit_shrink() +
+  ease_aes(&quot;sine-in-out&quot;)
+
+animate(map_2020, duration = 25, fps = 5, width = 800, height = 800, renderer = gifski_renderer())
+anim_save(&quot;map_2020.gif&quot;)
+
+#combining both animations using magick package
+a_gif = animate(map_2019, duration = 30, fps = 2, width = 400, height = 400)
+b_gif = animate(map_2020, duration = 30, fps = 2,  width = 400, height = 400)
+
+a_mgif = image_read(a_gif)
+b_mgif = image_read(b_gif)
+
+new_gif = image_append(c(a_mgif[1], b_mgif[1]))
+for (i in 2:60) {
+  combined = image_append(c(a_mgif[i], b_mgif[i]))
+  new_gif = c(new_gif, combined)
+}
+
+new_gif</code></pre>
+<p><img src="citibike_rides_maps_files/figure-html/side%20by%20side%20animation-1.gif" /><!-- --></p>
+<ul>
+<li>ggplot does not seem to let me manually adjust the legend scaling</li>
+<li>Need to find a more interesting way to display hospitals and hubs?</li>
+</ul>
+>>>>>>> 40c95ebec78d896afe009ce71430a5a529ec3df0:citibike_rides_maps.html
 <pre class="r"><code>#In retrospect I probably should have written a function to do this
 nyc = 
   as_tibble(
@@ -390,6 +479,7 @@ for (i in 2:12) {
 
 new_month_gif</code></pre>
 <p><img src="citibike_rides_maps_files/figure-html/rides%20in%202019%20vs%202020%20by%20month-1.gif" /><!-- --></p>
+<<<<<<< HEAD:nyctransitbikes.github.io-main/citibike_rides_maps.html
 <pre class="r"><code>bikes_2019 = manhattan_rides_df %&gt;% 
   filter(year == &quot;2019&quot;) %&gt;% 
     group_by(stop_date, end_station_longitude, end_station_latitude) %&gt;% 
@@ -407,6 +497,10 @@ bikes_2020 = manhattan_rides_df %&gt;%
          date = as.Date(date, &quot;%Y-%m-%d&quot;))
 
 timeline_2019 = 
+=======
+<p>It works!!</p>
+<pre class="r"><code>timeline_2019 = 
+>>>>>>> 40c95ebec78d896afe009ce71430a5a529ec3df0:citibike_rides_maps.html
   bikes_2019 %&gt;% 
   filter(date &gt;= as.Date(&quot;2019-02-16&quot;), date &lt;= as.Date(&quot;2019-06-30&quot;))
 
@@ -467,6 +561,10 @@ for (i in 2:60) {
 
 new_daily_gif</code></pre>
 <p><img src="citibike_rides_maps_files/figure-html/zoomed%20daily%20map-1.gif" /><!-- --></p>
+<<<<<<< HEAD:nyctransitbikes.github.io-main/citibike_rides_maps.html
+=======
+<p>May want to adjust window?</p>
+>>>>>>> 40c95ebec78d896afe009ce71430a5a529ec3df0:citibike_rides_maps.html
 
 
 

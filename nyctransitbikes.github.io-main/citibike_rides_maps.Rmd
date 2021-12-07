@@ -52,6 +52,7 @@ manhattan_rides_df <-
   )
 ```
 
+<<<<<<< HEAD:nyctransitbikes.github.io-main/citibike_rides_maps.Rmd
 ```{r, Rides by day of week}
 manhattan_rides_df %>% 
   group_by(day_of_week, year) %>% 
@@ -62,6 +63,8 @@ manhattan_rides_df %>%
   labs(x = "Day of the Week", y = "Number of Rides", col = "Year") +
   ggtitle("Citibike Rides by Day of the Week") +
   theme(plot.title = element_text(hjust = 0.5))
+=======
+>>>>>>> 40c95ebec78d896afe009ce71430a5a529ec3df0:citibike_rides_maps.Rmd
 ```
 
 Fewer rides during the week in 2020 (presumably because of WFH), but more rides on the weekends (presumably because people avoid subway/ ubers)
@@ -76,6 +79,93 @@ hospitals_df =
   drop_na()
 ```
 
+<<<<<<< HEAD:nyctransitbikes.github.io-main/citibike_rides_maps.Rmd
+=======
+```{r, side by side animation}
+nyc = 
+  as_tibble(
+    map_data("state")
+  ) %>% 
+  filter(subregion == "manhattan")
+
+bikes_2019 = manhattan_rides_df %>% 
+  filter(year == "2019") %>% 
+    group_by(stop_date, end_station_longitude, end_station_latitude) %>% 
+  summarise(n_rides = n()) %>% 
+  mutate(
+    date = paste0("2019-", stop_date),
+         date = as.Date(date, "%Y-%m-%d"))
+
+bikes_2020 = manhattan_rides_df %>%
+  filter(year == "2020") %>% 
+    group_by(stop_date, end_station_longitude, end_station_latitude) %>% 
+  summarise(n_rides = n()) %>% 
+  mutate(
+    date = paste0("2020-", stop_date),
+         date = as.Date(date, "%Y-%m-%d"))
+
+map_2019 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = "grey", alpha = 0.5) +
+  geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.5, color = n_rides), alpha = 0.5) +
+  geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = "red") + 
+  geom_point(data = hubs_df, aes(x = Long, y = Lat), color = "green") +
+  transition_time(date) +
+  labs(
+    title = "Date: {frame_time}", 
+    color = "Rides",
+    x = "Longitude",
+    y = "Latitude") +
+  scale_fill_continuous(breaks = c(2.5, 5.0, 7.5, 10.0, 12.5)) +
+  enter_grow() +
+  exit_shrink() +
+  ease_aes("sine-in-out")
+
+animate(map_2019, duration = 25, fps = 5, width = 800, height = 800, renderer = gifski_renderer())
+anim_save("map_2019.gif")
+
+map_2020 = 
+  ggplot() +
+  geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = "grey", alpha = 0.5) +
+  geom_point(data = bikes_2020, aes(x = end_station_longitude, y = end_station_latitude, size = 0.5, color = n_rides), alpha = 0.5) +
+scale_fill_continuous(limits = c(0,12.5), breaks = c(0, 2.5, 5.0, 7.5, 10.0, 12.5)) +
+  geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = "red") + 
+  geom_point(data = hubs_df, aes(x = Long, y = Lat), color = "green") +
+  transition_time(date) +
+  labs(
+    title = "Date: {frame_time}", 
+    color = "Rides",
+    x = "Longitude",
+    y = "Latitude"
+    ) +
+  theme(legend.position = "none") +
+  enter_grow() +
+  exit_shrink() +
+  ease_aes("sine-in-out")
+
+animate(map_2020, duration = 25, fps = 5, width = 800, height = 800, renderer = gifski_renderer())
+anim_save("map_2020.gif")
+
+#combining both animations using magick package
+a_gif = animate(map_2019, duration = 30, fps = 2, width = 400, height = 400)
+b_gif = animate(map_2020, duration = 30, fps = 2,  width = 400, height = 400)
+
+a_mgif = image_read(a_gif)
+b_mgif = image_read(b_gif)
+
+new_gif = image_append(c(a_mgif[1], b_mgif[1]))
+for (i in 2:60) {
+  combined = image_append(c(a_mgif[i], b_mgif[i]))
+  new_gif = c(new_gif, combined)
+}
+
+new_gif
+
+```
+
+* ggplot does not seem to let me manually adjust the legend scaling
+* Need to find a more interesting way to display hospitals and hubs?
+>>>>>>> 40c95ebec78d896afe009ce71430a5a529ec3df0:citibike_rides_maps.Rmd
 
 ```{r, rides in 2019 vs 2020 by month}
 #In retrospect I probably should have written a function to do this
@@ -146,6 +236,7 @@ for (i in 2:12) {
 new_month_gif
 ```
 
+<<<<<<< HEAD:nyctransitbikes.github.io-main/citibike_rides_maps.Rmd
 ```{r, zoomed daily map}
 bikes_2019 = manhattan_rides_df %>% 
   filter(year == "2019") %>% 
@@ -163,6 +254,11 @@ bikes_2020 = manhattan_rides_df %>%
     date = paste0("2020-", stop_date),
          date = as.Date(date, "%Y-%m-%d"))
 
+=======
+It works!!
+
+```{r, zoomed daily map}
+>>>>>>> 40c95ebec78d896afe009ce71430a5a529ec3df0:citibike_rides_maps.Rmd
 timeline_2019 = 
   bikes_2019 %>% 
   filter(date >= as.Date("2019-02-16"), date <= as.Date("2019-06-30"))
@@ -208,11 +304,19 @@ scale_fill_continuous(limits = c(0,12.5), breaks = c(0, 2.5, 5.0, 7.5, 10.0, 12.
   exit_shrink() +
   ease_aes("sine-in-out") +
   coord_cartesian(ylim = c(40.725, 40.825), xlim = c(-74.0125, -73.85))
+<<<<<<< HEAD:nyctransitbikes.github.io-main/citibike_rides_maps.Rmd
 
 #combining both animations using magick package
 a_daily_gif = animate(daily_map_2019, duration = 30, fps = 2, width = 400, height = 400)
 b_daily_gif = animate(daily_map_2020, duration = 30, fps = 2, width = 400, height = 400)
 
+=======
+
+#combining both animations using magick package
+a_daily_gif = animate(daily_map_2019, duration = 30, fps = 2, width = 400, height = 400)
+b_daily_gif = animate(daily_map_2020, duration = 30, fps = 2, width = 400, height = 400)
+
+>>>>>>> 40c95ebec78d896afe009ce71430a5a529ec3df0:citibike_rides_maps.Rmd
 a_daily_mgif = image_read(a_daily_gif)
 b_daily_mgif = image_read(b_daily_gif)
 
@@ -225,3 +329,4 @@ for (i in 2:60) {
 new_daily_gif
 ```
 
+May want to adjust window?
