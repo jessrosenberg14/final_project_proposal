@@ -11,10 +11,6 @@ library(tidyverse)
 library(lubridate)
 library(plotly)
 
-knitr::opts_chunk$set(
-  message = FALSE, 
-  warning = FALSE
-)
 ```
 
 ```{r, read in manhattan rides data}

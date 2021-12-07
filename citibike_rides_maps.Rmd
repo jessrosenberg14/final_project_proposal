@@ -221,10 +221,18 @@ new_month_gif
 It works!!
 
 ```{r, zoomed daily map}
+timeline_2019 = 
+  bikes_2019 %>% 
+  filter(date >= as.Date("2019-02-16"), date <= as.Date("2019-06-30"))
+
+timeline_2020 = 
+  bikes_2020 %>% 
+  filter(date >= as.Date("2020-02-16"), date <= as.Date("2020-06-30"))
+
 daily_map_2019 = 
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = "grey", alpha = 0.5) +
-  geom_point(data = bikes_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
+  geom_point(data = timeline_2019, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
   geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = "red") + 
   geom_point(data = hubs_df, aes(x = Long, y = Lat), color = "green") +
   transition_time(date) +
@@ -242,7 +250,7 @@ daily_map_2019 =
 daily_map_2020 = 
   ggplot() +
   geom_polygon(data = nyc, aes(x = long, y = lat, group = group), fill = "grey", alpha = 0.5) +
-  geom_point(data = bikes_2020, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
+  geom_point(data = timeline_2020, aes(x = end_station_longitude, y = end_station_latitude, size = 0.25, color = n_rides), alpha = 0.5) +
 scale_fill_continuous(limits = c(0,12.5), breaks = c(0, 2.5, 5.0, 7.5, 10.0, 12.5)) +
   geom_point(data = hospitals_df, aes(x = Long, y = Lat), color = "red") + 
   geom_point(data = hubs_df, aes(x = Long, y = Lat), color = "green") +
@@ -275,4 +283,4 @@ for (i in 2:12) {
 new_daily_gif
 ```
 
-
+Should run through June but currently only runs through March???
