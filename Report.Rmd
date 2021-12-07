@@ -9,8 +9,8 @@ output:
 ---
 
 Notes/ questions: 
-- confirm MTA data source
 - confirm with Zoe % change is 3/1/2020 to EOY 2020
+- source
 - Delete prompts
 
 # Motivation 
@@ -96,7 +96,7 @@ Subway turnstiles data from [2019](https://data.ny.gov/Transportation/Turnstile-
 
 ### Percent Change data
 
-Additionally, we downloaded COVID MTA ridership data, which details the percent change in MTA ridership during COVID by transportation type. 
+Additionally, we downloaded COVID MTA ridership data from , which details the percent change in MTA ridership during COVID by transportation type. 
 
 After importing and cleaning, the resulting datafile, `ridership_covid_pc_tidy`, includes the following variables: 
 
