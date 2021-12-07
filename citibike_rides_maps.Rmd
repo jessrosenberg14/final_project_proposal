@@ -22,6 +22,11 @@ library(magick)
 
 library(viridis)
 
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE
+)
+
 theme_set(theme_minimal())
 
 options(
@@ -47,9 +52,6 @@ manhattan_rides_df <-
                        levels = c("18-25","26-35", "36-45", "46-55", "56-65", "66-85"))
   )
 
-manhattan_rides_df %>% 
-  group_by(age_group) %>% 
-  summarize(min = min(age), max = max(age), obs = n())
 ```
 
 ```{r, read in hubs and hospital data}
@@ -144,10 +146,8 @@ new_gif
 
 ```
 
-* gif still needs adjusting so it is not so glitchy-looking (need to slow down animation I think)
-* also seems like the projection for the Manhattan polygon and the citibike data do not quite match up
-* need to fix legend to show red dots = hospitals and green dots = hubs
-* Need to find a more interesting way to display hospitals and hubs
+* ggplot does not seem to let me manually adjust the legend scaling
+* Need to find a more interesting way to display hospitals and hubs?
 
 ```{r, rides in 2019 vs 2020 by month}
 #In retrospect I probably should have written a function to do this
